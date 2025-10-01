@@ -269,7 +269,8 @@
 
     <script>
         let array = JSON.parse('<%-arr%>');
-        // let blockedDays = JSON.parse('<%-arr%>');
+        let blockedDays = JSON.parse('<%-block%>');
+        // let blockedDays = [1,2,3];
         let currentLocation = 'الاستراحة'; // 'rest' or 'camp'
         let selectedDateElement = null;
         let theSelectedDate = null;
@@ -314,7 +315,7 @@
                 const date = new Date(startDay);
                 date.setDate(startDay.getDate() + i);
                 const dateString = date.toISOString().split('T')[0];
-                const exists = array.includes(dateString);
+                const exists = array.filter(x => x.date == dateString && x.type == currentLocation).length || blockedDays.includes(date.getDay());
                 // const isBooked = false;
 
                 const dayElement = document.createElement('div');
@@ -414,7 +415,7 @@
                 body: data
             }).then(() => {
                 array.push(formValues.date)
-                generateCalendar(today);
+                generateCalendar(starting);
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('successModal').classList.remove('hidden');
                 document.getElementById('successModal').classList.add('flex');
@@ -493,7 +494,7 @@
             }
 
             // Regenerate calendar
-            // generateCalendar();
+            generateCalendar(starting);
         }
 
         // Add event listeners for location buttons

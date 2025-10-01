@@ -227,13 +227,13 @@
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 نوع الحجز</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                اسم المحجوز</th>
+                                اسم الحاجز</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 الهاتف</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 اسم الجهة</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                نوع الجهة</th>
+                            <!-- <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                نوع الجهة</th> -->
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 التاريخ</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -244,6 +244,8 @@
                                 واتساب</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 الإجراءات</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                حذف نهائي</th>
                         </tr>
                     </thead>
                     <tbody id="bookingsTable" class="bg-white divide-y divide-gray-200">
@@ -415,11 +417,6 @@
                 ${statusInfo.icon} ${statusInfo.text}
             </span>`;
         }
-
-        function getPeriodText(period) {
-            return period === 'morning' ? 'صباحي' : 'مسائي';
-        }
-
         function isDateInThisWeek(dateString) {
             const date = new Date(dateString);
             const today = new Date();
@@ -469,22 +466,17 @@
                     <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(booking.accepted)}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${booking.type === 'استراحة' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}">
-                            ${booking.type === 'استراحة' ? '🏡' : '🌾'} ${booking.type}
+                            ${booking.type === 'الاستراحة' ? '🏡' : '🌾'} ${booking.type}
                         </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">${booking.bookerName}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-gray-600">${booking.bookerPhone}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-gray-900">${booking.entityName}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            ${booking.entityType}
-                        </span>
-                    </td>
                     <td class="px-6 py-4 whitespace-nowrap text-gray-600">
                         ${booking.date}
                         ${isExpired ? '<span class="text-red-500 text-xs block">منتهي</span>' : ''}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">${getPeriodText(booking.timePeriod)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">${booking.timePeriod}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-gray-600">${booking.expectedCount} شخص</td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <button onclick="sendWhatsApp('${booking.bookerPhone}', '${booking.bookerName}', '${booking.entityName}', '${booking.date}')" 
@@ -510,6 +502,11 @@
                                 </button>
                             `}
                         </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap" onclick="deleteHjz(${index},'${booking["_id"]}')">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            ${booking.entityType}
+                        </span>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -666,6 +663,38 @@
                 applyFilters();
                 const statusText = newStatus === 'yes' ? 'قُبل' : newStatus === 'no' ? 'رُفض' : 'تم تحويله لقيد المراجعة';
                 alert(`تم تعديل حالة الحجز - ${statusText} بنجاح!`);
+
+            }).catch(() => {
+                alert("حصلت مشكلة في حفظ البيانات قد تضطر الى اعادة الادخال");
+                location.reload();
+            })
+        }
+
+
+        function deleteHjz(index, id) {
+            const booking = filteredBookings[index];
+            const originalIndex = bookings.findIndex(b =>
+                b.bookerName === booking.bookerName &&
+                b.bookerPhone === booking.bookerPhone &&
+                b.date === booking.date
+            );
+            document.getElementById('loading').classList.remove('hidden');
+
+            var data = new URLSearchParams();
+            data.append('id', id);
+            fetch('delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: data
+            }).then(() => {
+                document.getElementById('loading').classList.add('hidden');
+                currentBookingIndex = -1;
+                bookings.splice(originalIndex, 1);
+                applyFilters();
+                // const statusText = newStatus === 'yes' ? 'قُبل' : newStatus === 'no' ? 'رُفض' : 'تم تحويله لقيد المراجعة';
+                // alert(`تم تعديل حالة الحجز - ${statusText} بنجاح!`);
 
             }).catch(() => {
                 alert("حصلت مشكلة في حفظ البيانات قد تضطر الى اعادة الادخال");

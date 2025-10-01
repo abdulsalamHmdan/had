@@ -17,15 +17,16 @@ const url = "mongodb+srv://family:aS0507499583@cluster0.dvljyns.mongodb.net/?ret
 const client = new MongoClient(url);
 
 app.get('/', async function (req, res) {
+    res.render("login");
+})
+app.get('/hjz', async function (req, res) {
     await client.connect();
     const db = client.db("had");
     const collection = db.collection('hjz');
-    const user = await collection.find({ accepted: { $ne: "no" } }).map(x => x.date).toArray()
+    const user = await collection.find({ accepted: { $ne: "no" } }).project({ date: 1, type: 1, _id: 0 }).toArray()
     client.close()
     console.log(user)
-    // res.send(user)
-
-    res.render("had", { arr: JSON.stringify(user) });
+    res.render("had", { arr: JSON.stringify(user), block: JSON.stringify([]) });
 })
 app.get('/admin', async function (req, res) {
     await client.connect();
@@ -54,11 +55,22 @@ app.post('/saveExam', async function (req, res) {
     const db = client.db("had");
     const collection = db.collection('hjz');
     await collection.insertOne(JSON.parse(req.body.data)).then(() => {
-        req.session[req.body.type] = "done"
-        req.session.save(function (err) {
-            if (err) return next(err)
-            res.send('saved')
-        })
+        // req.session[req.body.type] = "done"
+        // req.session.save(function (err) {
+        //     if (err) return next(err)
+        res.send('saved')
+        // })
+
+    }).catch(err => {
+        res.send('notFound');
+    })
+})
+app.post('/delete', async function (req, res) {
+    await client.connect();
+    const db = client.db("had");
+    const collection = db.collection('hjz');
+    await collection.deleteOne({ _id: new ObjectId(req.body.id) }).then(() => {
+        res.send('deleted')
 
     }).catch(err => {
         res.send('notFound');
@@ -67,5 +79,5 @@ app.post('/saveExam', async function (req, res) {
 
 
 
-app.listen(3000)
-console.log("http://127.0.0.1:3000")
+app.listen(3070)
+console.log("http://127.0.0.1:3070")
