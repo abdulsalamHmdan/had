@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة إدارة الحجوزات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-accepted {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .status-rejected {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card.selected {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #1d4ed8;
+        }
+
+        .stat-card.selected p {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .stat-card.selected .text-green-600,
+        .stat-card.selected .text-yellow-600,
+        .stat-card.selected .text-red-600,
+        .stat-card.selected .text-blue-600 {
+            color: white !important;
+        }
+
+        .stat-card:not(.selected) {
+            opacity: 0.7;
+            filter: grayscale(0.3);
+        }
+
+        .stat-card:not(.selected):hover {
+            opacity: 1;
+            filter: grayscale(0);
+        }
+
+        .stat-card.selected::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.1) 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b-4 border-blue-500">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+                    <span class="bg-blue-500 text-white p-2 rounded-lg ml-3">📋</span>
+                    لوحة إدارة الحجوزات
+                </h1>
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <div class="bg-blue-100 px-4 py-2 rounded-lg">
+                        <span class="text-blue-800 font-semibold" id="totalBookings">0 حجز</span>
+                    </div>
+                    <button onclick="exportData()"
+                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        تصدير البيانات
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filters -->
+    <div class="max-w-7xl mx-auto px-6 py-6">
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">🔍 فلترة الحجوزات</h2>
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                <select id="statusFilter"
+                    class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">جميع الحالات</option>
+                    <option value="yes">مقبولة</option>
+                    <option value="pending">قيد المراجعة</option>
+                    <option value="no">مرفوضة</option>
+                </select>
+                <select id="bookingTypeFilter"
+                    class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">جميع أنواع الحجز</option>
+                    <option value="استراحة">استراحة</option>
+                    <option value="مزرعة">مزرعة</option>
+                </select>
+                <select id="entityTypeFilter"
+                    class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">جميع أنواع الجهات</option>
+                    <option value="حكومي">حكومي</option>
+                    <option value="خاص">خاص</option>
+                    <option value="أهلي">أهلي</option>
+                </select>
+                <select id="periodFilter"
+                    class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">جميع الفترات</option>
+                    <option value="morning">صباحي</option>
+                    <option value="evening">مسائي</option>
+                </select>
+                <select id="timeFilter"
+                    class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">جميع التواريخ</option>
+                    <option value="thisWeek">هذا الأسبوع</option>
+                    <option value="thisMonth">هذا الشهر</option>
+                    <option value="expired">التواريخ المنتهية</option>
+                </select>
+                <input type="text" id="searchFilter" placeholder="البحث بالاسم أو الهاتف..."
+                    class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div id="acceptedCard" onclick="filterByStatus('yes')"
+                class="stat-card bg-white rounded-xl shadow-lg p-6 border-r-4 border-green-500 cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">الحجوزات المقبولة</p>
+                        <p class="text-2xl font-bold text-green-600" id="acceptedCount">0</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-full">
+                        <span class="text-2xl">✅</span>
+                    </div>
+                </div>
+            </div>
+            <div id="pendingCard" onclick="filterByStatus('pending')"
+                class="stat-card bg-white rounded-xl shadow-lg p-6 border-r-4 border-yellow-500 cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">قيد المراجعة</p>
+                        <p class="text-2xl font-bold text-yellow-600" id="pendingCount">0</p>
+                    </div>
+                    <div class="bg-yellow-100 p-3 rounded-full">
+                        <span class="text-2xl">⏳</span>
+                    </div>
+                </div>
+            </div>
+            <div id="rejectedCard" onclick="filterByStatus('no')"
+                class="stat-card bg-white rounded-xl shadow-lg p-6 border-r-4 border-red-500 cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">الحجوزات المرفوضة</p>
+                        <p class="text-2xl font-bold text-red-600" id="rejectedCount">0</p>
+                    </div>
+                    <div class="bg-red-100 p-3 rounded-full">
+                        <span class="text-2xl">❌</span>
+                    </div>
+                </div>
+            </div>
+            <div id="totalCard" onclick="filterByStatus('')"
+                class="stat-card bg-white rounded-xl shadow-lg p-6 border-r-4 border-blue-500 cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 selected">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">إجمالي الحجوزات</p>
+                        <p class="text-2xl font-bold text-blue-600" id="totalCount">0</p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-full">
+                        <span class="text-2xl">📊</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings Table -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="px-6 py-4 bg-gray-50 border-b">
+                <h2 class="text-xl font-bold text-gray-800">📋 قائمة الحجوزات</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                الحالة</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                نوع الحجز</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                اسم المحجوز</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                الهاتف</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                اسم الجهة</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                نوع الجهة</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                التاريخ</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                الفترة</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                العدد المتوقع</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                واتساب</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTable" class="bg-white divide-y divide-gray-200">
+                        <!-- Bookings will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Details Modal -->
+    <div id="bookingModal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-90vh overflow-y-auto">
+            <div class="px-6 py-4 bg-blue-500 text-white rounded-t-xl">
+                <h3 class="text-xl font-bold">تفاصيل الحجز</h3>
+            </div>
+            <div id="modalContent" class="p-6">
+                <!-- Modal content will be populated here -->
+            </div>
+            <div class="px-6 py-4 bg-gray-50 rounded-b-xl flex justify-end space-x-3 space-x-reverse">
+                <button onclick="closeModal()"
+                    class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Change Modal -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md mx-4 text-center">
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">جاري التعديل</h3>
+            <!-- <p class="text-gray-600 mb-6">تم تسجيل حجزك وسيتم التواصل معك قريباً</p> -->
+        </div>
+    </div>
+    <div id="statusChangeModal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+            <div class="px-6 py-4 bg-orange-500 text-white rounded-t-xl">
+                <h3 class="text-xl font-bold">تعديل حالة الحجز</h3>
+            </div>
+            <div class="p-6">
+                <div class="mb-4">
+                    <p class="text-gray-700 mb-2">الحالة الحالية:</p>
+                    <div id="currentStatus" class="mb-4"></div>
+                    <div id="obid" class="mb-4 hidden"></div>
+                </div>
+                <div class="mb-6">
+                    <p class="text-gray-700 mb-3">اختر الحالة الجديدة:</p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <input type="radio" name="newStatus" value="yes" class="ml-3">
+                            <span class="flex items-center">
+                                <span class="text-green-600 ml-2">✅</span>
+                                مقبول
+                            </span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <input type="radio" name="newStatus" value="pending" class="ml-3">
+                            <span class="flex items-center">
+                                <span class="text-yellow-600 ml-2">⏳</span>
+                                قيد المراجعة
+                            </span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <input type="radio" name="newStatus" value="no" class="ml-3">
+                            <span class="flex items-center">
+                                <span class="text-red-600 ml-2">❌</span>
+                                مرفوض
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-gray-50 rounded-b-xl flex justify-end space-x-3 space-x-reverse">
+                <button onclick="closeStatusChangeModal()"
+                    class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    إلغاء
+                </button>
+                <button onclick="confirmStatusChange()"
+                    class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    تأكيد التغيير
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample bookings data
+        let bookings = JSON.parse('<%-arr%>');
+        // let bookings = [
+        //     {
+        //         type: "استراحة",
+        //         date: "2024-01-15",
+        //         bookerName: "عبدالسلام حمدان",
+        //         bookerPhone: "0512345678",
+        //         entityName: "وزارة التعليم",
+        //         entityType: "حكومي",
+        //         entryTime: "09:00",
+        //         exitTime: "12:00",
+        //         expectedCount: "15",
+        //         idNumber: "1234567890",
+        //         managerName: "أحمد محمد",
+        //         managerPhone: "0512345679",
+        //         timePeriod: "morning",
+        //         accepted: "yes"
+        //     },
+        //     {
+        //         type: "مزرعة",
+        //         date: "2024-12-28",
+        //         bookerName: "فاطمة العلي",
+        //         bookerPhone: "0523456789",
+        //         entityName: "شركة الاتصالات",
+        //         entityType: "خاص",
+        //         entryTime: "14:00",
+        //         exitTime: "16:30",
+        //         expectedCount: "8",
+        //         idNumber: "2345678901",
+        //         managerName: "سارة أحمد",
+        //         managerPhone: "0523456790",
+        //         timePeriod: "evening",
+        //         accepted: "pending"
+        //     },
+        //     {
+        //         type: "استراحة",
+        //         date: "2024-12-30",
+        //         bookerName: "محمد الخالد",
+        //         bookerPhone: "0534567890",
+        //         entityName: "جمعية الخير",
+        //         entityType: "أهلي",
+        //         entryTime: "10:00",
+        //         exitTime: "15:00",
+        //         expectedCount: "25",
+        //         idNumber: "3456789012",
+        //         managerName: "عمر سالم",
+        //         managerPhone: "0534567891",
+        //         timePeriod: "morning",
+        //         accepted: "no"
+        //     },
+        //     {
+        //         type: "مزرعة",
+        //         date: "2025-01-05",
+        //         bookerName: "نورا السالم",
+        //         bookerPhone: "0545678901",
+        //         entityName: "جامعة الملك سعود",
+        //         entityType: "حكومي",
+        //         entryTime: "08:00",
+        //         exitTime: "17:00",
+        //         expectedCount: "50",
+        //         idNumber: "4567890123",
+        //         managerName: "خالد العتيبي",
+        //         managerPhone: "0545678902",
+        //         timePeriod: "morning",
+        //         accepted: "yes"
+        //     }
+        // ];
+        // console.log(bookings[0]["_id"])
+        let filteredBookings = [...bookings];
+
+        function getStatusBadge(status) {
+            const statusMap = {
+                'yes': { text: 'مقبول', class: 'status-accepted', icon: '✅' },
+                'pending': { text: 'قيد المراجعة', class: 'status-pending', icon: '⏳' },
+                'no': { text: 'مرفوض', class: 'status-rejected', icon: '❌' }
+            };
+            const statusInfo = statusMap[status] || statusMap['pending'];
+            return `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white ${statusInfo.class}">
+                ${statusInfo.icon} ${statusInfo.text}
+            </span>`;
+        }
+
+        function getPeriodText(period) {
+            return period === 'morning' ? 'صباحي' : 'مسائي';
+        }
+
+        function isDateInThisWeek(dateString) {
+            const date = new Date(dateString);
+            const today = new Date();
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - today.getDay());
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+            return date >= startOfWeek && date <= endOfWeek;
+        }
+
+        function isDateInThisMonth(dateString) {
+            const date = new Date(dateString);
+            const today = new Date();
+            return date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+        }
+
+        function isDateExpired(dateString) {
+            const date = new Date(dateString);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return date < today;
+        }
+
+        function sendWhatsApp(phone, name, entityName, date) {
+            const message = `مرحباً ${name}،\n\nنود تأكيد حجزكم لـ ${entityName} بتاريخ ${date}.\n\nشكراً لكم.`;
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${phone.replace(/^0/, '966')}?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        function renderBookings() {
+            const tbody = document.getElementById('bookingsTable');
+            tbody.innerHTML = '';
+
+            filteredBookings.forEach((booking, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 fade-in';
+
+                // Add visual indicator for expired dates
+                const isExpired = isDateExpired(booking.date);
+                if (isExpired) {
+                    row.className += ' bg-red-50';
+                }
+
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(booking.accepted)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${booking.type === 'استراحة' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}">
+                            ${booking.type === 'استراحة' ? '🏡' : '🌾'} ${booking.type}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">${booking.bookerName}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">${booking.bookerPhone}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-900">${booking.entityName}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            ${booking.entityType}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">
+                        ${booking.date}
+                        ${isExpired ? '<span class="text-red-500 text-xs block">منتهي</span>' : ''}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">${getPeriodText(booking.timePeriod)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">${booking.expectedCount} شخص</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <button onclick="sendWhatsApp('${booking.bookerPhone}', '${booking.bookerName}', '${booking.entityName}', '${booking.date}')" 
+                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs transition-colors flex items-center">
+                            📱 إرسال
+                        </button>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex space-x-2 space-x-reverse">
+                            <button onclick="viewBooking(${index})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs transition-colors">
+                                عرض
+                            </button>
+                            ${booking.accepted === 'pending' ? `
+                                <button onclick="updateStatus(${index}, 'yes','${booking["_id"]}')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs transition-colors">
+                                    قبول
+                                </button>
+                                <button onclick="updateStatus(${index}, 'no','${booking["_id"]}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs transition-colors">
+                                    رفض
+                                </button>
+                            ` : `
+                                <button onclick="showStatusChangeModal(${index})" class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-xs transition-colors">
+                                    تعديل الحالة
+                                </button>
+                            `}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            updateStatistics();
+        }
+
+        function updateStatistics() {
+            const accepted = filteredBookings.filter(b => b.accepted === 'yes').length;
+            const pending = filteredBookings.filter(b => b.accepted === 'pending').length;
+            const rejected = filteredBookings.filter(b => b.accepted === 'no').length;
+            const total = filteredBookings.length;
+
+            document.getElementById('acceptedCount').textContent = accepted;
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('rejectedCount').textContent = rejected;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('totalBookings').textContent = `${total} حجز`;
+        }
+
+        function applyFilters() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const bookingTypeFilter = document.getElementById('bookingTypeFilter').value;
+            const entityTypeFilter = document.getElementById('entityTypeFilter').value;
+            const periodFilter = document.getElementById('periodFilter').value;
+            const timeFilter = document.getElementById('timeFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+
+            filteredBookings = bookings.filter(booking => {
+                const matchesStatus = !statusFilter || booking.accepted === statusFilter;
+                const matchesBookingType = !bookingTypeFilter || booking.type === bookingTypeFilter;
+                const matchesEntityType = !entityTypeFilter || booking.entityType === entityTypeFilter;
+                const matchesPeriod = !periodFilter || booking.timePeriod === periodFilter;
+                const matchesSearch = !searchFilter ||
+                    booking.bookerName.toLowerCase().includes(searchFilter) ||
+                    booking.bookerPhone.includes(searchFilter) ||
+                    booking.entityName.toLowerCase().includes(searchFilter);
+
+                let matchesTime = true;
+                if (timeFilter) {
+                    switch (timeFilter) {
+                        case 'thisWeek':
+                            matchesTime = isDateInThisWeek(booking.date);
+                            break;
+                        case 'thisMonth':
+                            matchesTime = isDateInThisMonth(booking.date);
+                            break;
+                        case 'expired':
+                            matchesTime = isDateExpired(booking.date);
+                            break;
+                    }
+                }
+
+                return matchesStatus && matchesBookingType && matchesEntityType && matchesPeriod && matchesSearch && matchesTime;
+            });
+
+            renderBookings();
+        }
+
+        function viewBooking(index) {
+            const booking = filteredBookings[index];
+            const modalContent = document.getElementById('modalContent');
+
+            modalContent.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-lg text-gray-800 border-b pb-2">معلومات المحجوز</h4>
+                        <div><span class="font-semibold">الاسم:</span> ${booking.bookerName}</div>
+                        <div><span class="font-semibold">رقم الهوية:</span> ${booking.idNumber}</div>
+                        <div><span class="font-semibold">الهاتف:</span> ${booking.bookerPhone}</div>
+                        <div><span class="font-semibold">اسم المسؤول:</span> ${booking.managerName}</div>
+                        <div><span class="font-semibold">هاتف المسؤول:</span> ${booking.managerPhone}</div>
+                    </div>
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-lg text-gray-800 border-b pb-2">تفاصيل الحجز</h4>
+                        <div><span class="font-semibold">نوع الحجز:</span> ${booking.type}</div>
+                        <div><span class="font-semibold">اسم الجهة:</span> ${booking.entityName}</div>
+                        <div><span class="font-semibold">نوع الجهة:</span> ${booking.entityType}</div>
+                        <div><span class="font-semibold">التاريخ:</span> ${booking.date}</div>
+                        <div><span class="font-semibold">الفترة:</span> ${getPeriodText(booking.timePeriod)}</div>
+                        <div><span class="font-semibold">وقت الدخول:</span> ${booking.entryTime}</div>
+                        <div><span class="font-semibold">وقت الخروج:</span> ${booking.exitTime}</div>
+                        <div><span class="font-semibold">العدد المتوقع:</span> ${booking.expectedCount} شخص</div>
+                        <div><span class="font-semibold">الحالة:</span> ${getStatusBadge(booking.accepted)}</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('bookingModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('bookingModal').classList.add('hidden');
+        }
+
+        let currentBookingIndex = -1;
+
+        function showStatusChangeModal(index) {
+            currentBookingIndex = index;
+            const booking = filteredBookings[index];
+
+            // Show current status
+            document.getElementById('currentStatus').innerHTML = getStatusBadge(booking.accepted);
+            document.getElementById('obid').innerHTML = booking["_id"];
+
+            // Clear previous selections
+            const radios = document.querySelectorAll('input[name="newStatus"]');
+            radios.forEach(radio => radio.checked = false);
+
+
+            document.getElementById('statusChangeModal').classList.remove('hidden');
+        }
+
+        function closeStatusChangeModal() {
+            document.getElementById('statusChangeModal').classList.add('hidden');
+        }
+
+        function confirmStatusChange() {
+            const selectedStatus = document.querySelector('input[name="newStatus"]:checked');
+            if (!selectedStatus) {
+                alert('يرجى اختيار الحالة الجديدة');
+                return;
+            }
+            const newStatus = selectedStatus.value;
+            const id = document.getElementById('obid').innerText;
+            closeStatusChangeModal();
+            updateStatus(currentBookingIndex, newStatus, id);
+
+        }
+
+        function updateStatus(index, newStatus, id) {
+            const booking = filteredBookings[index];
+            const originalIndex = bookings.findIndex(b =>
+                b.bookerName === booking.bookerName &&
+                b.bookerPhone === booking.bookerPhone &&
+                b.date === booking.date
+            );
+            document.getElementById('loading').classList.remove('hidden');
+
+            var data = new URLSearchParams();
+            data.append('id', id);
+            data.append('st', newStatus);
+            fetch('changeS', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: data
+            }).then(() => {
+                document.getElementById('loading').classList.add('hidden');
+                currentBookingIndex = -1;
+                bookings[originalIndex].accepted = newStatus;
+                applyFilters();
+                const statusText = newStatus === 'yes' ? 'قُبل' : newStatus === 'no' ? 'رُفض' : 'تم تحويله لقيد المراجعة';
+                alert(`تم تعديل حالة الحجز - ${statusText} بنجاح!`);
+
+            }).catch(() => {
+                alert("حصلت مشكلة في حفظ البيانات قد تضطر الى اعادة الادخال");
+                location.reload();
+            })
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(filteredBookings, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'bookings_export.json';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function filterByStatus(status) {
+            // Set the status filter dropdown to the selected status
+            document.getElementById('statusFilter').value = status;
+
+            // Clear other filters to show only status-based results
+            document.getElementById('bookingTypeFilter').value = '';
+            document.getElementById('entityTypeFilter').value = '';
+            document.getElementById('periodFilter').value = '';
+            document.getElementById('timeFilter').value = '';
+            document.getElementById('searchFilter').value = '';
+
+            // Update card selection states
+            updateCardSelection(status);
+
+            // Apply the filters
+            applyFilters();
+
+            // Add visual feedback
+            const statusText = status === 'yes' ? 'المقبولة' :
+                status === 'pending' ? 'قيد المراجعة' :
+                    status === 'no' ? 'المرفوضة' : 'جميع الحجوزات';
+
+            // Show a brief notification
+            showNotification(`تم عرض ${statusText}`);
+        }
+
+        function updateCardSelection(selectedStatus) {
+            // Remove selected class from all cards
+            const allCards = document.querySelectorAll('.stat-card');
+            allCards.forEach(card => card.classList.remove('selected'));
+
+            // Add selected class to the appropriate card
+            let selectedCard;
+            switch (selectedStatus) {
+                case 'yes':
+                    selectedCard = document.getElementById('acceptedCard');
+                    break;
+                case 'pending':
+                    selectedCard = document.getElementById('pendingCard');
+                    break;
+                case 'no':
+                    selectedCard = document.getElementById('rejectedCard');
+                    break;
+                default:
+                    selectedCard = document.getElementById('totalCard');
+                    break;
+            }
+
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+        }
+
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 fade-in';
+            notification.textContent = message;
+
+            // Add to page
+            document.body.appendChild(notification);
+
+            // Remove after 2 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 2000);
+        }
+
+        // Event listeners
+        document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        document.getElementById('bookingTypeFilter').addEventListener('change', applyFilters);
+        document.getElementById('entityTypeFilter').addEventListener('change', applyFilters);
+        document.getElementById('periodFilter').addEventListener('change', applyFilters);
+        document.getElementById('timeFilter').addEventListener('change', applyFilters);
+        document.getElementById('searchFilter').addEventListener('input', applyFilters);
+
+        // Close modal when clicking outside
+        document.getElementById('bookingModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        document.getElementById('statusChangeModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeStatusChangeModal();
+            }
+        });
+
+        // Initialize
+        renderBookings();
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9868fd2c20ecedcd',t:'MTc1OTEyMjc4Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
