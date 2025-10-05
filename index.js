@@ -1,5 +1,6 @@
 var express = require('express')
 var session = require('express-session')
+const nodemailer = require("nodemailer");
 var app = express()
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
@@ -16,6 +17,44 @@ const ejs = require('ejs');
 const url = "mongodb+srv://family:aS0507499583@cluster0.dvljyns.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(url);
 
+// إعداد المرسل (يفضل تستخدم Gmail أو البريد الخاص بموقعك)
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: "abdulsalam.hmdan@gmail.com", // بريدك
+        pass: "qplv rijn cmbp nycu", // استخدم App Password لو Gmail
+    },
+});
+
+async function sendBookingNotification(bookingData) {
+    try {
+        const mailOptions = {
+            from: '"موقع الحجز" <abdulsalam.hmdan@hotmail.com>',
+            to: "jalyat.ar@gmail.com", // بريدك لتستقبل الإشعارات
+            subject: "📢لديك حجز جديد ",
+            html: `
+        <h3>تم استلام حجز جديد ✅</h3>
+        <p><strong>الجهة:</strong> ${bookingData.entityName}</p>
+        <p><strong>الاسم:</strong> ${bookingData.bookerName}</p>
+        <p><strong>التاريخ:</strong> ${bookingData.date}</p>
+        <p><strong>الفترة:</strong> ${bookingData.timePeriod}</p>
+        <p><strong>نوع الحجز:</strong> ${bookingData.type}</p>
+        <a href='https://had-iwvj.onrender.com/admin'><strong>الذهاب للموقع</a>
+      `,
+        };
+
+        await transporter.sendMail(mailOptions);
+        // console.log("✅ تم إرسال الإشعار بالبريد");
+    } catch (error) {
+        console.error("❌ فشل إرسال الإشعار:", error);
+    }
+}
+
+app.get('/send', async function (req, res) {
+    sendBookingNotification()
+
+    res.send("done");
+})
 app.get('/', async function (req, res) {
     res.render("welcom");
 })
@@ -23,7 +62,7 @@ app.get('/hjz', async function (req, res) {
     await client.connect();
     const db = client.db("had");
     const collection = db.collection('hjz');
-    const user = await collection.find({ accepted: { $ne: "no" } }).project({ date: 1, type: 1, _id: 0 }).toArray()
+    const user = await collection.find({ accepted: { $ne: "no" } }).project({ date: 1, type: 1, timePeriod: 1, _id: 0 }).toArray()
     const collection2 = db.collection('days');
     const user2 = await collection2.find().toArray()
     client.close()
@@ -71,13 +110,10 @@ app.post('/saveHjz', async function (req, res) {
     await client.connect();
     const db = client.db("had");
     const collection = db.collection(req.body.collection);
-    await collection.insertOne(JSON.parse(req.body.data)).then(() => {
-        // req.session[req.body.type] = "done"
-        // req.session.save(function (err) {
-        //     if (err) return next(err)
+    const data = JSON.parse(req.body.data);
+    await collection.insertOne(data).then(() => {
+        sendBookingNotification(data)
         res.send('saved')
-        // })
-
     }).catch(err => {
         res.send('notFound');
     })
