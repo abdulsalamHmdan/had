@@ -208,14 +208,15 @@
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">ملاحظات
                                 *</label>
-                            <input type="tel" name="notes" required pattern="[0-9]{10}" value="0512345678"
+                            <input type="text" name="notes" value=""
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="05xxxxxxxx">
                         </div>
 
                         <div class="flex gap-3 pt-4">
                             <button type="submit"
-                                class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105">
+                                class="w-full bg-[#2b3b43] text-white py-3 px-4 rounded-lg font-medium hover:bg-[#989948] hover:text-[#2b3b43] transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <!-- class="flex-1 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"> -->
                                 تأكيد الحجز
                             </button>
                             <button type="button" id="cancelBtn"
@@ -441,11 +442,11 @@
                 },
                 body: data
             }).then(() => {
-                array.push(formValues.date)
-                generateCalendar(starting);
+                array.push(formValues)
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('successModal').classList.remove('hidden');
                 document.getElementById('successModal').classList.add('flex');
+                generateCalendar(starting);
             }).catch(() => {
                 alert("حصلت مشكلة في حفظ البيانات قد تضطر الى اعادة الادخال");
                 location.reload();
