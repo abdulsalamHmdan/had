@@ -50,7 +50,14 @@
         }
 
         .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+            background: linear-gradient(135deg, #f3f4e6 0%, #989948 100%);
+
+        }
+
+        .input-focus:focus {
+            border-color: #989948;
+            box-shadow: 0 0 0 3px rgba(152, 153, 72, 0.15);
         }
     </style>
 </head>
@@ -59,8 +66,8 @@
     <!-- Header -->
     <header class="gradient-bg text-white py-6 shadow-lg">
         <div class="container mx-auto px-6">
-            <h1 class="text-3xl font-bold text-center">نظام إدارة الحجوزات</h1>
-            <p class="text-center mt-2 text-blue-100">اختر نوع المكان ثم التاريخ المناسب لإجراء الحجز</p>
+            <h1 class="text-3xl font-bold text-center text-slate-800">جمعية هاد للدعوة والارشاد</h1>
+            <p class="text-center mt-2 text-blue-100 text-slate-700">اختر نوع المكان ثم التاريخ المناسب لإجراء الحجز</p>
         </div>
     </header>
 
@@ -276,7 +283,9 @@
         let theSelectedDate = null;
         let starting = null;
         // Generate calendar for next 30 days
-        const today = new Date();
+        const todayS = new Date().toISOString().split('T')[0];
+        const today = new Date(todayS);
+
         generateCalendar(today);
 
         function generateCalendar(startDay) {
@@ -297,7 +306,6 @@
                 calendar.appendChild(header);
             });
             // Get current booked dates based on location
-            // let startDay = new Date(today);
             for (let i = startDay.getDay(); i > 0; i--) {
                 const date = new Date(startDay);
                 date.setDate(startDay.getDate() - i);
@@ -315,9 +323,9 @@
                 const date = new Date(startDay);
                 date.setDate(startDay.getDate() + i);
                 const dateString = date.toISOString().split('T')[0];
-                const exists = array.filter(x => x.date == dateString && x.type == currentLocation).length || blockedDays.includes(date.getDay());
-                // const isBooked = false;
-
+                const mhjoze = array.filter(x => x.date == dateString && x.type == currentLocation).length > 0;
+                const blocked = blockedDays.filter(x => x.dayOfWeek == date.getDay() && x.type == currentLocation && isTodayBetween(x.startDate, x.endDate, date)).length > 0;
+                const exists = mhjoze || blocked;
                 const dayElement = document.createElement('div');
                 // dayElement.style = "background: linear-gradient(to bottom, red 50%, green 50%);"
                 // dayElement.style = "background: linear-gradient(to bottom, green 50%, red 50%);"
@@ -340,6 +348,25 @@
                 calendar.appendChild(dayElement);
             }
         }
+
+
+
+        function isTodayBetween(startDate, endDate, check) {
+            // const [sd, sm, sy] = startDateStr.split('-').map(Number);
+            startDate = new Date(startDate);
+
+            // إذا فيه تاريخ نهاية نحوله، وإذا لا نخليه null
+            if (endDate) {
+                endDate = new Date(endDate);
+            }
+            // التحقق
+            if (endDate) {
+                return check >= startDate && check <= endDate;
+            } else {
+                return check >= startDate;
+            }
+        }
+
 
         // Helper function to get Hijri month names
         function getHijriMonth(date) {
@@ -404,10 +431,10 @@
             // Show success modal
             const formValues = printFormValues();
             document.getElementById('loading').classList.remove('hidden');
-
             var data = new URLSearchParams();
+            data.append('collection', 'hjz');
             data.append('data', JSON.stringify(formValues));
-            fetch('saveExam', {
+            fetch('saveHjz', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
@@ -500,9 +527,6 @@
         // Add event listeners for location buttons
         document.getElementById('restBtn').addEventListener('click', () => switchLocation('الاستراحة'));
         document.getElementById('campBtn').addEventListener('click', () => switchLocation('المخيم'));
-
-        // Initialize calendar
-        // generateCalendar();
     </script>
     <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9843fa8a81a7e3b2',t:'MTc1ODczNDcwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
 </body>

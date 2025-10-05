@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة إدارة الحجوزات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-accepted {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .status-rejected {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card.selected {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #1d4ed8;
+        }
+
+        .stat-card.selected p {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .stat-card.selected .text-green-600,
+        .stat-card.selected .text-yellow-600,
+        .stat-card.selected .text-red-600,
+        .stat-card.selected .text-blue-600 {
+            color: white !important;
+        }
+
+        .stat-card:not(.selected) {
+            opacity: 0.7;
+            filter: grayscale(0.3);
+        }
+
+        .stat-card:not(.selected):hover {
+            opacity: 1;
+            filter: grayscale(0);
+        }
+
+        .stat-card.selected::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.1) 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b-4 border-purple-500">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+                    <span class="bg-purple-500 text-white p-2 rounded-lg ml-3">🔄</span>
+                    إدارة الحجوزات الأسبوعية
+                </h1>
+                <div class="flex items-center">
+                    <button onclick="showNewRecurringBookingModal()"
+                        class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-colors flex items-center">
+                        <span class="ml-2">➕</span>
+                        إضافة حجز أسبوعي جديد
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-6">
+        <!-- Active Recurring Bookings List -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="px-6 py-4 bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+                <h2 class="text-xl font-bold flex items-center justify-between">
+                    <span>📋 الحجوزات الأسبوعية النشطة</span>
+                    <div class="flex items-center space-x-3 space-x-reverse">
+                        <span class="text-sm bg-white bg-opacity-20 px-3 py-1 rounded-full" id="activeBookingsCount">0
+                            حجز نشط</span>
+                        <button id="toggleViewBtn" onclick="toggleView()"
+                            class="text-xs bg-green-500 hover:bg-green-600 px-3 py-1 rounded-full transition-colors">
+                            📋 إظهار التفاصيل
+                        </button>
+                    </div>
+                </h2>
+            </div>
+
+            <div class="p-6">
+                <div id="activeRecurringBookings" class="space-y-4">
+                    <!-- Active recurring bookings will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- New Recurring Booking Modal -->
+    <div id="newRecurringBookingModal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full h-full max-h-[95vh] flex flex-col overflow-hidden">
+            <div class="px-6 py-4 bg-purple-500 text-white rounded-t-xl">
+                <h3 class="text-xl font-bold">إضافة حجز أسبوعي متكرر</h3>
+            </div>
+            <div class="flex-1 overflow-y-auto">
+                <form id="recurringBookingForm" class="p-6 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">اسم المحجوز *</label>
+                            <input type="text" id="recurringBookerName" required
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">رقم الهاتف *</label>
+                            <input type="tel" id="recurringBookerPhone" required
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">اسم الجهة *</label>
+                            <input type="text" id="recurringEntityName" required
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">نوع الجهة *</label>
+                            <select id="recurringEntityType" required
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <option value="">اختر نوع الجهة</option>
+                                <option value="حكومي">حكومي</option>
+                                <option value="خاص">خاص</option>
+                                <option value="أهلي">أهلي</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">نوع الحجز *</label>
+                            <select id="recurringBookingType" required
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <option value="">اختر نوع الحجز</option>
+                                <option value="الاستراحة">استراحة</option>
+                                <option value="المخيم">المخيم</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">العدد المتوقع *</label>
+                            <input type="number" id="recurringExpectedCount" required min="1"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">اختر اليوم المتكرر أسبوعياً *</label>
+                        <div class="grid grid-cols-3 md:grid-cols-7 gap-2">
+                            <label
+                                class="flex items-center p-2 border rounded-lg hover:bg-gray-50 cursor-pointer text-sm">
+                                <input type="radio" name="recurringDay" value="0" required class="ml-2">
+                                <span>الأحد</span>
+                            </label>
+                            <label
+                                class="flex items-center p-2 border rounded-lg hover:bg-gray-50 cursor-pointer text-sm">
+                                <input type="radio" name="recurringDay" value="1" required class="ml-2">
+                                <span>الاثنين</span>
+                            </label>
+                            <label
+                                class="flex items-center p-2 border rounded-lg hover:bg-gray-50 cursor-pointer text-sm">
+                                <input type="radio" name="recurringDay" value="2" required class="ml-2">
+                                <span>الثلاثاء</span>
+                            </label>
+                            <label
+                                class="flex items-center p-2 border rounded-lg hover:bg-gray-50 cursor-pointer text-sm">
+                                <input type="radio" name="recurringDay" value="3" required class="ml-2">
+                                <span>الأربعاء</span>
+                            </label>
+                            <label
+                                class="flex items-center p-2 border rounded-lg hover:bg-gray-50 cursor-pointer text-sm">
+                                <input type="radio" name="recurringDay" value="4" required class="ml-2">
+                                <span>الخميس</span>
+                            </label>
+                            <label
+                                class="flex items-center p-2 border rounded-lg hover:bg-gray-50 cursor-pointer text-sm">
+                                <input type="radio" name="recurringDay" value="5" required class="ml-2">
+                                <span>الجمعة</span>
+                            </label>
+                            <label
+                                class="flex items-center p-2 border rounded-lg hover:bg-gray-50 cursor-pointer text-sm">
+                                <input type="radio" name="recurringDay" value="6" required class="ml-2">
+                                <span>السبت</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">الفترة *</label>
+                            <select id="recurringTimePeriod" required
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <option value="">اختر الفترة</option>
+                                <option value="morning">صباحي</option>
+                                <option value="evening">مسائي</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">وقت الدخول *</label>
+                            <input type="time" id="recurringEntryTime" required
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">وقت الخروج *</label>
+                            <input type="time" id="recurringExitTime" required
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">تاريخ البداية *</label>
+                            <input type="date" id="recurringStartDate" required
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">تاريخ النهاية (اختياري)</label>
+                            <input type="date" id="recurringEndDate"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <p class="text-xs text-gray-500 mt-1">اتركه فارغاً للحجز المستمر</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-1">ملاحظات</label>
+                        <textarea id="recurringNotes" rows="2"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            placeholder="أي ملاحظات إضافية..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div
+                class="flex-shrink-0 px-6 py-4 bg-gray-50 rounded-b-xl flex justify-end space-x-3 space-x-reverse border-t">
+                <button onclick="closeNewRecurringBookingModal()"
+                    class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    إلغاء
+                </button>
+                <button onclick="createRecurringBooking()"
+                    class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    إنشاء الحجز الأسبوعي
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden z-60 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl p-8 text-center max-w-md w-full">
+            <div class="mb-6">
+                <div
+                    class="inline-block animate-spin rounded-full h-16 w-16 border-4 border-purple-200 border-t-purple-500">
+                </div>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">جاري إنشاء الحجز الأسبوعي...</h3>
+            <p class="text-gray-600">يرجى الانتظار قليلاً</p>
+            <div class="mt-4 bg-purple-50 rounded-lg p-3">
+                <div class="flex items-center justify-center space-x-2 space-x-reverse">
+                    <span class="text-purple-600">🔄</span>
+                    <span class="text-sm text-purple-700 font-medium">تتم معالجة البيانات...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Date Range Modal -->
+    <div id="dateRangeModal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+            <div class="px-6 py-4 bg-blue-500 text-white rounded-t-xl">
+                <h3 class="text-xl font-bold">تحديد الفترة الزمنية</h3>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">من تاريخ *</label>
+                    <input type="date" id="fromDate" required
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">إلى تاريخ *</label>
+                    <input type="date" id="toDate" required
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div class="bg-blue-50 p-3 rounded-lg">
+                    <p class="text-sm text-blue-700">
+                        <span class="font-semibold">💡 ملاحظة:</span> سيتم عرض الحجوزات الأسبوعية التي تقع ضمن الفترة
+                        المحددة
+                    </p>
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-gray-50 rounded-b-xl flex justify-end space-x-3 space-x-reverse">
+                <button onclick="closeDateRangeModal()"
+                    class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    إلغاء
+                </button>
+                <button onclick="applyDateRange()"
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    تطبيق الفترة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Recurring bookings data
+        let recurringBookings = JSON.parse('<%-arr%>');
+        const dayNames = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+        let currentDateRange = null;
+        let isSimpleView = true;
+        let icons ={
+            "الاستراحة":"🏡",
+            "المخيم":"🏕️"
+        }
+
+        function sendWhatsApp(phone, name, entityName, date) {
+            const message = `مرحباً ${name}،\n\nنود تأكيد حجزكم لـ ${entityName} بتاريخ ${date}.\n\nشكراً لكم.`;
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${phone.replace(/^0/, '966')}?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        // Date range functions
+        function showDateRangeModal() {
+            // Set default dates (current month)
+            const today = new Date();
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+            document.getElementById('fromDate').value = firstDay.toISOString().split('T')[0];
+            document.getElementById('toDate').value = lastDay.toISOString().split('T')[0];
+
+            document.getElementById('dateRangeModal').classList.remove('hidden');
+        }
+
+        function closeDateRangeModal() {
+            document.getElementById('dateRangeModal').classList.add('hidden');
+        }
+
+        function applyDateRange() {
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+
+            if (!fromDate || !toDate) {
+                alert('يرجى تحديد تاريخ البداية والنهاية');
+                return;
+            }
+
+            if (new Date(fromDate) > new Date(toDate)) {
+                alert('تاريخ البداية يجب أن يكون قبل تاريخ النهاية');
+                return;
+            }
+
+            currentDateRange = { from: fromDate, to: toDate };
+            renderActiveRecurringBookings();
+            closeDateRangeModal();
+
+            // Show success message
+            const fromFormatted = new Date(fromDate).toLocaleDateString('ar-SA');
+            const toFormatted = new Date(toDate).toLocaleDateString('ar-SA');
+            alert(`تم تطبيق الفترة من ${fromFormatted} إلى ${toFormatted}`);
+        }
+
+        function clearDateRange() {
+            currentDateRange = null;
+            renderActiveRecurringBookings();
+        }
+
+        function toggleView() {
+            isSimpleView = !isSimpleView;
+            const toggleBtn = document.getElementById('toggleViewBtn');
+
+            if (isSimpleView) {
+                toggleBtn.textContent = '📋 إظهار التفاصيل';
+                toggleBtn.className = 'text-xs bg-green-500 hover:bg-green-600 px-3 py-1 rounded-full transition-colors';
+            } else {
+                toggleBtn.textContent = '📋 إخفاء التفاصيل';
+                toggleBtn.className = 'text-xs bg-yellow-500 hover:bg-yellow-600 px-3 py-1 rounded-full transition-colors';
+            }
+
+            renderActiveRecurringBookings();
+        }
+
+        // Recurring booking functions
+        function showNewRecurringBookingModal() {
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('recurringStartDate').min = today;
+            document.getElementById('recurringEndDate').min = today;
+
+            document.getElementById('newRecurringBookingModal').classList.remove('hidden');
+        }
+
+        function closeNewRecurringBookingModal() {
+            document.getElementById('newRecurringBookingModal').classList.add('hidden');
+            document.getElementById('recurringBookingForm').reset();
+        }
+
+        function createRecurringBooking() {
+            const form = document.getElementById('recurringBookingForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const formData = {
+                bookerName: document.getElementById('recurringBookerName').value,
+                bookerPhone: document.getElementById('recurringBookerPhone').value,
+                entityName: document.getElementById('recurringEntityName').value,
+                entityType: document.getElementById('recurringEntityType').value,
+                type: document.getElementById('recurringBookingType').value,
+                dayOfWeek: parseInt(document.querySelector('input[name="recurringDay"]:checked').value),
+                timePeriod: document.getElementById('recurringTimePeriod').value,
+                entryTime: document.getElementById('recurringEntryTime').value,
+                exitTime: document.getElementById('recurringExitTime').value,
+                expectedCount: document.getElementById('recurringExpectedCount').value,
+                startDate: document.getElementById('recurringStartDate').value,
+                endDate: document.getElementById('recurringEndDate').value || null,
+                status: 'active',
+                notes: document.getElementById('recurringNotes').value,
+                createdDate: new Date().toISOString().split('T')[0]
+            };
+
+            closeNewRecurringBookingModal();
+            // Show loading modal
+            showLoadingModal();
+
+            // Simulate processing time (2 seconds)
+
+            var data = new URLSearchParams();
+            data.append('collection', 'days');
+            data.append('data', JSON.stringify(formData));
+            fetch('saveHjz', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: data
+            }).then(() => {
+                recurringBookings.push(formData);
+                renderActiveRecurringBookings();
+                hideLoadingModal();
+            }).catch(() => {
+                alert("حصلت مشكلة في حفظ البيانات قد تضطر الى اعادة الادخال");
+                location.reload();
+            })
+        }
+
+        function showLoadingModal() {
+            document.getElementById('loadingModal').classList.remove('hidden');
+        }
+
+        function hideLoadingModal() {
+            document.getElementById('loadingModal').classList.add('hidden');
+        }
+
+        function renderActiveRecurringBookings() {
+            const container = document.getElementById('activeRecurringBookings');
+            let activeBookings = recurringBookings.filter(rb => rb.status === 'active');
+
+            // Update counter
+            document.getElementById('activeBookingsCount').textContent = `${activeBookings.length} حجز نشط`;
+
+            if (activeBookings.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="text-6xl mb-6">📅</div>
+                        <h3 class="text-2xl font-bold text-gray-600 mb-4">لا توجد حجوزات أسبوعية نشطة</h3>
+                        <p class="text-gray-500 mb-6">ابدأ بإضافة حجز أسبوعي جديد لإدارة الحجوزات المتكررة</p>
+                        <button onclick="showNewRecurringBookingModal()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                            ➕ إضافة حجز أسبوعي
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            if (isSimpleView) {
+                // Simple view - show only days
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+                        ${activeBookings.map(rb => `
+                            <div class="bg-gradient-to-br from-purple-100 to-indigo-100 border-2 border-purple-300 rounded-xl p-4 text-center hover:shadow-lg transition-all duration-300 cursor-pointer" onclick="toggleView()">
+                                <div class="text-3xl mb-2">${icons[rb.type]}</div>
+                                <div class="font-bold text-lg text-purple-800 mb-1">${dayNames[rb.dayOfWeek]}</div>
+                                <div class="text-sm text-gray-700 font-semibold mb-1">${rb.bookerName}</div>
+                                <div class="text-xs text-gray-600 mb-2">${rb.entityName}</div>
+                                <div class="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
+                                    ${rb.entryTime} - ${rb.exitTime}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="text-center mt-6 p-4 bg-blue-50 rounded-lg">
+                        <p class="text-blue-700 text-sm">
+                            <span class="font-semibold">💡 نصيحة:</span> اضغط على أي بطاقة أو زر "إظهار التفاصيل" لرؤية المعلومات الكاملة
+                        </p>
+                    </div>
+                `;
+            } else {
+                // Detailed view
+                container.innerHTML = activeBookings.map(rb => `
+                    <div class="border border-purple-200 rounded-lg p-6 bg-gradient-to-r from-purple-50 to-indigo-50 hover:shadow-lg transition-all duration-300">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-xl text-gray-800 mb-1">${rb.bookerName}</h4>
+                                <p class="text-gray-600 text-lg">${rb.entityName}</p>
+                                <span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium mt-2">
+                                    ${rb.entityType}
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold text-purple-800 bg-purple-200">
+                                    🔄 نشط
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                            <div class="bg-white p-3 rounded-lg border">
+                                <span class="font-semibold text-gray-700 block text-sm">اليوم المتكرر</span>
+                                <span class="text-purple-700 font-bold text-lg">${dayNames[rb.dayOfWeek]}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border">
+                                <span class="font-semibold text-gray-700 block text-sm">التوقيت</span>
+                                <span class="text-gray-800 font-bold">${rb.entryTime} - ${rb.exitTime}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border">
+                                <span class="font-semibold text-gray-700 block text-sm">نوع الحجز</span>
+                                <span class="text-gray-800 font-bold">${rb.type}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border">
+                                <span class="font-semibold text-gray-700 block text-sm">العدد المتوقع</span>
+                                <span class="text-gray-800 font-bold">${rb.expectedCount} شخص</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="bg-white p-3 rounded-lg border">
+                                <span class="font-semibold text-gray-700 block text-sm">تاريخ البداية</span>
+                                <span class="text-gray-800">${rb.startDate}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border">
+                                <span class="font-semibold text-gray-700 block text-sm">تاريخ النهاية</span>
+                                <span class="text-gray-800">${rb.endDate || 'مستمر'}</span>
+                            </div>
+                        </div>
+
+                        ${rb.notes ? `
+                            <div class="bg-white p-3 rounded-lg border mb-4">
+                                <span class="font-semibold text-gray-700 block text-sm mb-1">ملاحظات</span>
+                                <span class="text-gray-800">${rb.notes}</span>
+                            </div>
+                        ` : ''}
+
+                        <div class="flex justify-end space-x-3 space-x-reverse pt-4 border-t border-purple-200">
+                            <button onclick="sendWhatsApp('${rb.bookerPhone}', '${rb.bookerName}', '${rb.entityName}', 'حجز أسبوعي - ${dayNames[rb.dayOfWeek]}')" 
+                                    class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center">
+                                <span class="ml-2">📱</span>
+                                واتساب
+                            </button>
+                            <button onclick="deleteRecurringBooking('${rb["_id"]}')" 
+                                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center">
+                                <span class="ml-2">🗑️</span>
+                                حذف
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function deleteRecurringBooking(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الحجز الأسبوعي؟')) {
+                const index = recurringBookings.findIndex(rb => rb['_id'] === id);
+                if (index !== -1) {
+                    var data = new URLSearchParams();
+                    data.append('collection', 'days');
+                    data.append('id', id);
+                    fetch('delete', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                        },
+                        body: data
+                    }).then(() => {
+                        recurringBookings.splice(index, 1);
+                        renderActiveRecurringBookings();
+                    }).catch(() => {
+                        alert("حصلت مشكلة في حذف البيانات قد تضطر الى اعادة الادخال");
+                        location.reload();
+                    })
+                }
+            }
+        }
+
+        // Close modals when clicking outside
+        document.getElementById('newRecurringBookingModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeNewRecurringBookingModal();
+            }
+        });
+
+        document.getElementById('dateRangeModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeDateRangeModal();
+            }
+        });
+
+        // Initialize
+        renderActiveRecurringBookings();
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'98985bff80b4b53b',t:'MTc1OTYxOTQ5Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
