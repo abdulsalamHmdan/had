@@ -17,7 +17,7 @@ const url = "mongodb+srv://family:aS0507499583@cluster0.dvljyns.mongodb.net/?ret
 const client = new MongoClient(url);
 
 app.get('/', async function (req, res) {
-    res.render("login");
+    res.render("welcom");
 })
 app.get('/hjz', async function (req, res) {
     await client.connect();
@@ -31,24 +31,29 @@ app.get('/hjz', async function (req, res) {
     res.render("had", { arr: JSON.stringify(user), block: JSON.stringify(user2) });
 })
 app.get('/days', async function (req, res) {
-    await client.connect();
-    const db = client.db("had");
-    const collection = db.collection('days');
-    // const user = await collection.find({ accepted: { $ne: "no" } }).project({ date: 1, type: 1, _id: 0 }).toArray()
-    const user = await collection.find().toArray()
-    client.close()
-    // console.log(user)
-    res.render("days", { arr: JSON.stringify(user), block: JSON.stringify([]) });
+    if (req.session.admin) {
+        await client.connect();
+        const db = client.db("had");
+        const collection = db.collection('days');
+        const user = await collection.find().toArray()
+        client.close()
+        res.render("days", { arr: JSON.stringify(user), block: JSON.stringify([]) });
+    } else {
+        res.send("غير مصرح لك بالدخول");
+    }
 })
 app.get('/admin', async function (req, res) {
-    await client.connect();
-    const db = client.db("had");
-    const collection = db.collection('hjz');
-    const user = await collection.find({}).toArray()
-    client.close()
-    // console.log(user)
+    if (req.session.admin) {
+        await client.connect();
+        const db = client.db("had");
+        const collection = db.collection('hjz');
+        const user = await collection.find({}).toArray()
+        client.close()
+        res.render("admin", { arr: JSON.stringify(user) });
+    } else {
+        res.render("login");
 
-    res.render("admin", { arr: JSON.stringify(user) });
+    }
 })
 
 app.post('/changeS', async function (req, res) {
@@ -89,6 +94,33 @@ app.post('/delete', async function (req, res) {
     })
 })
 
+
+app.post('/login', express.urlencoded({ extended: false }), function (req, res) {
+    if (req.body.user == "admin" && req.body.pass == "112233") {
+        req.session.regenerate(function (err) {
+            if (err) next(err)
+            req.session.admin = true
+            req.session.save(function (err) {
+                if (err) return next(err)
+                res.send('exist')
+            })
+        })
+    } else {
+        res.send('notFound');
+    }
+})
+
+app.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            return res.status(500).send('Error during logout');
+        }
+        // Optionally, clear the session cookie from the client's browser
+        res.clearCookie('connect.sid'); // Replace 'connect.sid' with your session cookie name
+        res.redirect('/admin');
+    });
+});
 
 
 app.listen(3070)
