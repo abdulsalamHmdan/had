@@ -66,6 +66,7 @@
         }
 
         @media (max-width: 768px) {
+
             /* Make layout more compact on smaller screens */
             .container {
                 padding-left: 0rem !important;
@@ -73,26 +74,32 @@
             }
 
             h1 {
-                font-size: 1.75rem; /* A bit smaller than text-3xl */
+                font-size: 1.75rem;
+                /* A bit smaller than text-3xl */
             }
 
             /* Adjust location buttons for smaller screens */
-            #restBtn, #campBtn {
+            #restBtn,
+            #campBtn {
                 padding: 0.75rem;
-                font-size: 0.875rem; /* text-sm */
+                font-size: 0.875rem;
+                /* text-sm */
             }
 
             /* Make calendar more compact */
             #calendar {
-                gap: 0.25rem; /* gap-1 */
+                gap: 0.25rem;
+                /* gap-1 */
             }
 
             .calendar-day {
-                padding: 0.5rem 0.1rem; /* py-2 px-0.5 */
+                padding: 0.5rem 0.1rem;
+                /* py-2 px-0.5 */
             }
 
             .calendar-day .text-lg {
-                font-size: 0.875rem; /* text-sm */
+                font-size: 0.875rem;
+                /* text-sm */
             }
 
             .calendar-day .text-xs {
@@ -101,13 +108,12 @@
             }
 
             /* Adjust day headers */
-            #calendar > div:nth-child(-n+7) {
+            #calendar>div:nth-child(-n+7) {
                 font-size: 0.65rem;
                 padding: 0.4rem 0;
                 font-weight: 600;
             }
         }
-        
     </style>
 </head>
 
@@ -175,7 +181,8 @@
                     <p id="selectedDate" class="text-blue-600 font-semibold mb-4"></p>
                     <form id="reservationForm" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">اسم الجهة  الراغبة في الحجز *</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">اسم الجهة الراغبة في الحجز
+                                *</label>
                             <input type="text" name="entityName" required
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
@@ -192,35 +199,40 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">اسم الشخص الذي قام بحجز المقر ( ثلاثي )
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">اسم الشخص الذي قام بحجز المقر
+                                ( ثلاثي )
                                 *</label>
                             <input type="text" name="bookerName" required
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">رقم الهوية  للشخص الذي قام بحجز المقر *</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">رقم الهوية للشخص الذي قام بحجز
+                                المقر *</label>
                             <input type="text" name="idNumber" required pattern="[0-9]{10}"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="10 أرقام">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">جوال الشخص الذي قام بحجز المقر *</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">جوال الشخص الذي قام بحجز المقر
+                                *</label>
                             <input type="tel" name="bookerPhone" required pattern="[0-9]{10}"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="05xxxxxxxx">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">اسم المسؤول داخل البرنامج  ( المتواجد أثناء الإقامة بالمقر)
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">اسم المسؤول داخل البرنامج (
+                                المتواجد أثناء الإقامة بالمقر)
                                 *</label>
                             <input type="text" name="managerName" required
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">جوال المسؤول داخل البرنامج  ( المتواجد أثناء الإقامة بالمقر)
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">جوال المسؤول داخل البرنامج (
+                                المتواجد أثناء الإقامة بالمقر)
                                 *</label>
                             <input type="tel" name="managerPhone" required pattern="[0-9]{10}"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -401,9 +413,11 @@
                         if (cl !== "available") {
                             select.value = text == "متاح صباحا" ? "صباحي" : "مسائي";
                             select.disabled = true;
+                            setPeriod();
                         } else {
                             select.value = "";
                             select.disabled = false;
+                            setPeriod();
 
                         }
                         theSelectedDate = dateString;
@@ -421,7 +435,6 @@
                 return { "class": "full-booked", "text": "محجوز" }
             }
             if (arr.length == 1) {
-                console.log(arr[0]["timePeriod"] || arr)
                 return { "class": "booked", "text": `متاح ${arr[0]["timePeriod"] == "صباحي" ? "مساءا" : "صباحا"}` }
             }
             return { "class": "available", "text": "متاح" }
@@ -598,6 +611,42 @@
 
             // Regenerate calendar
             generateCalendar(starting);
+        }
+        const periodSelect = document.querySelector('select[name="timePeriod"]');
+        periodSelect.addEventListener("change", setPeriod);
+        function setPeriod() {
+            const entryInput = document.querySelector('input[name="entryTime"]');
+            const exitInput = document.querySelector('input[name="exitTime"]');
+            const value = periodSelect.value;
+            console.log(value)
+            if (value === "صباحي") {
+                entryInput.min = "04:00";
+                entryInput.max = "14:30";
+                exitInput.min = "04:00";
+                exitInput.max = "14:30";
+            }
+            else if (value === "مسائي") {
+                entryInput.min = "15:00";
+                entryInput.max = "23:59";
+                exitInput.min = "15:00";
+                exitInput.max = "23:59";
+            }
+            else if (value === "كامل اليوم") {
+                entryInput.min = "04:00";
+                entryInput.max = "23:59";
+                exitInput.min = "04:00";
+                exitInput.max = "23:59";
+            }
+            else {
+                // لو رجع اختار "اختر الفترة"
+                entryInput.removeAttribute("min");
+                entryInput.removeAttribute("max");
+                exitInput.removeAttribute("min");
+                exitInput.removeAttribute("max");
+            }
+            // تنظيف القيم القديمة إذا كانت خارج النطاق
+            entryInput.value = "";
+            exitInput.value = "";
         }
 
         // Add event listeners for location buttons
