@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة إدارة الحجوزات</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body {
             box-sizing: border-box;
@@ -133,8 +134,8 @@
                 <select id="bookingTypeFilter"
                     class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     <option value="">جميع أنواع الحجز</option>
-                    <option value="استراحة">استراحة</option>
-                    <option value="مزرعة">مزرعة</option>
+                    <option value="الاستراحة">الاستراحة</option>
+                    <option value="المخيم">المخيم</option>
                 </select>
                 <select id="entityTypeFilter"
                     class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
@@ -146,8 +147,8 @@
                 <select id="periodFilter"
                     class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     <option value="">جميع الفترات</option>
-                    <option value="morning">صباحي</option>
-                    <option value="evening">مسائي</option>
+                    <option value="صباحي">صباحي</option>
+                    <option value="مسائي">مسائي</option>
                 </select>
                 <select id="timeFilter"
                     class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
@@ -219,7 +220,7 @@
                 <h2 class="text-xl font-bold text-gray-800">📋 قائمة الحجوزات</h2>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full">
+                <table id="table" class="w-full">
                     <thead class="bg-gray-100">
                         <tr>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -257,13 +258,11 @@
 
 
         <div class="bg-white rounded-xl shadow-lg overflow-hidden mt-7">
-            <div class="px-6 py-4 bg-gray-50 border-b">
-                <h2 class="text-xl font-bold text-gray-800">📋 قائمة الحجوزات</h2>
-            </div>
-            <div class="overflow-x-auto">
-
+            <div class="mx-auto text-center px-6 py-4 bg-gray-50 border-b ">
+                <a href="/days" class="text-xl font-bold text-gray-800">إدارة الحجوزات الأسبوعية 📅</a>
             </div>
         </div>
+
     </div>
 
     <!-- Booking Details Modal -->
@@ -653,15 +652,59 @@
         }
 
         function exportData() {
-            const dataStr = JSON.stringify(filteredBookings, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'bookings_export.json';
-            link.click();
-            URL.revokeObjectURL(url);
+            const columnsMap = {
+                type: "نوع المنشأة",
+                date: "التاريخ",
+                entityName: "اسم الجهة",
+                entityType: "نوع الجهة",
+                bookerName: "اسم الحاجز",
+                idNumber: "رقم الهوية",
+                bookerPhone: "رقم جوال الحاجز",
+                managerName: "اسم المسؤول",
+                managerPhone: "رقم جوال المسؤول",
+                timePeriod: "الفترة",
+                entryTime: "وقت الدخول",
+                exitTime: "وقت الخروج",
+                expectedCount: "عدد الأشخاص",
+                notes: "الملاحظات",
+                accepted: "حالة الحجز"
+            };
+
+            // نحول البيانات حسب الأسماء العربية
+            const translatedData = filteredBookings.map((item, i) => {
+                const newItem = {};
+                newItem["م"] = i + 1;
+                for (const key in columnsMap) {
+                    newItem[columnsMap[key]] = item[key] ?? "";
+                }
+                return newItem;
+            });
+
+            const ws = XLSX.utils.json_to_sheet(translatedData);
+
+            // توسيط النصوص في جميع الخلايا
+            const range = XLSX.utils.decode_range(ws['!ref']);
+            for (let R = range.s.r; R <= range.e.r; ++R) {
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                    const cell_address = XLSX.utils.encode_cell({ r: R, c: C });
+                    if (!ws[cell_address]) continue;
+                    if (!ws[cell_address].s) ws[cell_address].s = {};
+                    ws[cell_address].s.alignment = { horizontal: "center", vertical: "center" };
+                }
+            }
+
+            // إعدادات الاتجاه (من اليمين لليسار)
+            ws['!rtl'] = true;
+
+            // إنشاء ملف Excel
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "الحجوزات");
+
+            // حفظ الملف
+            XLSX.writeFile(wb, "الحجوزات.xlsx");
         }
+
+
 
         function filterByStatus(status) {
             // Set the status filter dropdown to the selected status
