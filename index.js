@@ -1,6 +1,6 @@
 var express = require('express')
 var session = require('express-session')
-const nodemailer = require("nodemailer");
+var { Resend } = require('resend');
 var app = express()
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
@@ -16,23 +16,15 @@ const { MongoClient, ObjectId } = require('mongodb');
 const ejs = require('ejs');
 const url = "mongodb+srv://family:aS0507499583@cluster0.dvljyns.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(url);
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465, // أو 587
-    secure: true, // true للبورت 465، false للبورت 587
-    auth: {
-        user: "abdulsalam.hmdan@gmail.com", // بريدك
-        pass: "qplv rijn cmbp nycu", // استخدم App Password لو Gmail
-    },
-});
-
-// إعداد المرسل (يفضل تستخدم Gmail أو البريد الخاص بموقعك)
+const resend = new Resend('re_3ZjE8aHS_PUbPf4uQ6hSeLBrmNk9YvYNw');
 
 async function sendBookingNotification(bookingData = {}) {
+
+
     try {
-        const mailOptions = {
-            from: '"موقع الحجز" <abdulsalam.hmdan@hotmail.com>',
-            to: "jalyat.ar@gmail.com", // بريدك لتستقبل الإشعارات
+        await resend.emails.send({
+            from: 'onboarding@resend.dev',
+            to: 'jalyat.ar@gmail.com',
             subject: "📢لديك حجز جديد ",
             html: `
         <h3>تم استلام حجز جديد ✅</h3>
@@ -42,10 +34,8 @@ async function sendBookingNotification(bookingData = {}) {
         <p><strong>الفترة:</strong> ${bookingData.timePeriod}</p>
         <p><strong>نوع الحجز:</strong> ${bookingData.type}</p>
         <a href='https://had-iwvj.onrender.com/admin'><strong>الذهاب للموقع</a>
-      `,
-        };
-
-        await transporter.sendMail(mailOptions);
+      `
+        });
         console.log("✅ تم إرسال الإشعار بالبريد");
     } catch (error) {
         console.error("❌ فشل إرسال الإشعار:", error);
