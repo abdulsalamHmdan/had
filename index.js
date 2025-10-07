@@ -149,9 +149,7 @@ app.get('/logout', (req, res) => {
 });
 
 
-app.listen(3070)
 const port = process.env.PORT || 3070;
-
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
