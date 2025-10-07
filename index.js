@@ -17,7 +17,6 @@ const ejs = require('ejs');
 const url = "mongodb+srv://family:aS0507499583@cluster0.dvljyns.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(url);
 const resend = new Resend('re_3ZjE8aHS_PUbPf4uQ6hSeLBrmNk9YvYNw');
-
 async function sendBookingNotification(bookingData = {}) {
 
 
@@ -151,4 +150,8 @@ app.get('/logout', (req, res) => {
 
 
 app.listen(3070)
-console.log("http://127.0.0.1:3070")
+const port = process.env.PORT || 3070;
+
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
