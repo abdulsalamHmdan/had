@@ -16,17 +16,19 @@ const { MongoClient, ObjectId } = require('mongodb');
 const ejs = require('ejs');
 const url = "mongodb+srv://family:aS0507499583@cluster0.dvljyns.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(url);
-
-// إعداد المرسل (يفضل تستخدم Gmail أو البريد الخاص بموقعك)
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465, // أو 587
+    secure: true, // true للبورت 465، false للبورت 587
     auth: {
         user: "abdulsalam.hmdan@gmail.com", // بريدك
         pass: "qplv rijn cmbp nycu", // استخدم App Password لو Gmail
     },
 });
 
-async function sendBookingNotification(bookingData) {
+// إعداد المرسل (يفضل تستخدم Gmail أو البريد الخاص بموقعك)
+
+async function sendBookingNotification(bookingData = {}) {
     try {
         const mailOptions = {
             from: '"موقع الحجز" <abdulsalam.hmdan@hotmail.com>',
@@ -44,7 +46,7 @@ async function sendBookingNotification(bookingData) {
         };
 
         await transporter.sendMail(mailOptions);
-        // console.log("✅ تم إرسال الإشعار بالبريد");
+        console.log("✅ تم إرسال الإشعار بالبريد");
     } catch (error) {
         console.error("❌ فشل إرسال الإشعار:", error);
     }
@@ -52,7 +54,6 @@ async function sendBookingNotification(bookingData) {
 
 app.get('/send', async function (req, res) {
     sendBookingNotification()
-
     res.send("done");
 })
 app.get('/', async function (req, res) {

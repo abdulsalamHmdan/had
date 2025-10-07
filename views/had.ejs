@@ -400,7 +400,7 @@
                 // dayElement.style = "background: linear-gradient(to bottom, red 50%, green 50%);"
                 // dayElement.style = "background: linear-gradient(to bottom, green 50%, red 50%);"
                 const { class: cl, text } = check([...mhjoze, ...blocked]);
-                dayElement.className = `calendar-day p-4 rounded-lg text-center font-semibold ${cl} ${i === 0 ? 'ring-2 ring-blue-400' : ''}`;
+                dayElement.className = `calendar-day py-4 rounded-lg text-center font-semibold ${cl} ${i === 0 ? 'ring-2 ring-blue-400' : ''}`;
 
                 dayElement.innerHTML = `
                     <div class="text-lg">${date.getDate()}</div>
