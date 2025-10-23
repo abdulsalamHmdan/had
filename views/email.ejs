@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إشعار بحجز جديد</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', Arial, sans-serif;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body
+    style="margin: 0; padding: 0; background-color: #f7f8fa; direction: rtl; font-family: 'Tajawal', Arial, sans-serif;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td style="padding: 40px 10px;">
+                <table align="center" border="0" cellpadding="0" cellspacing="0" width="600"
+                    style="border-collapse: collapse; background-color: #ffffff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #e9ecef;">
+
+                    <tr>
+                        <td align="center" style="padding: 30px 20px 20px 20px;">
+                            <h1>إشعارات النظام</h1>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" style="padding: 0 20px 20px 20px;">
+                            <h1 style="font-size: 28px; font-weight: 700; color: #333; margin: 0;">لديك حجز جديد!</h1>
+                            <p style="font-size: 16px; color: #666; margin: 10px 0 0 0;">تم تأكيد حجز جديد في
+                                النظام.</p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 0 40px;">
+                            <hr style="border: 0; border-top: 1px solid #e9ecef;">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 30px 40px;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%"
+                                style="border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 12px 0; font-size: 16px; color: #888;">🏢 &nbsp; الجهة</td>
+                                    <td align="left"
+                                        style="padding: 12px 0; font-size: 16px; color: #333; font-weight: 700;">
+                                        <%=bookingData.entityName%>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <hr style="border: 0; border-top: 1px dashed #e0e0e0;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px 0; font-size: 16px; color: #888;">👤 &nbsp; الاسم</td>
+                                    <td align="left"
+                                        style="padding: 12px 0; font-size: 16px; color: #333; font-weight: 700;">
+                                        <%=bookingData.bookerName%>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <hr style="border: 0; border-top: 1px dashed #e0e0e0;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px 0; font-size: 16px; color: #888;">🗓️ &nbsp; التاريخ</td>
+                                    <td align="left"
+                                        style="padding: 12px 0; font-size: 16px; color: #333; font-weight: 700;">
+                                        <%=bookingData.date%>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <hr style="border: 0; border-top: 1px dashed #e0e0e0;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px 0; font-size: 16px; color: #888;">⏰ &nbsp; الفترة</td>
+                                    <td align="left"
+                                        style="padding: 12px 0; font-size: 16px; color: #333; font-weight: 700;">
+                                        <%=bookingData.timePeriod%>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <hr style="border: 0; border-top: 1px dashed #e0e0e0;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px 0; font-size: 16px; color: #888;">🔖 &nbsp; نوع الحجز</td>
+                                    <td align="left"
+                                        style="padding: 12px 0; font-size: 16px; color: #333; font-weight: 700;">
+                                        <%=bookingData.type%>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" style="padding: 20px 40px 40px 40px;">
+                            <a href="https://had-iwvj.onrender.com/admin"
+                                style="display: inline-block; padding: 15px 35px; font-size: 18px; font-weight: 700; color: #ffffff; background-color: #0056b3; text-decoration: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 86, 179, 0.3);">
+                                عرض تفاصيل الحجز
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center"
+                            style="padding: 20px 30px; background-color: #f7f8fa; color: #999; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+                            <p style="margin: 0; font-size: 14px;">&copy; <%=new Date().getFullYear()%> اسم مؤسستك. جميع
+                                    الحقوق محفوظة.</p>
+                            <p style="margin: 5px 0 0 0; font-size: 12px;">هذه رسالة آلية من نظام الحجوزات.</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

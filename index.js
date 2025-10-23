@@ -17,33 +17,37 @@ const ejs = require('ejs');
 const url = "mongodb+srv://family:aS0507499583@cluster0.dvljyns.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(url);
 const resend = new Resend('re_3ZjE8aHS_PUbPf4uQ6hSeLBrmNk9YvYNw');
+const { minify } = require('html-minifier');
+
+
 async function sendBookingNotification(bookingData = {}) {
 
-
+    //jalyat.ar@gmail.com
     try {
+        const html = await ejs.renderFile(`views/email.ejs`, { bookingData });
+        const minimized = minify(html, {
+            collapseWhitespace: true,
+            removeComments: true,
+            minifyCSS: true
+        });
         await resend.emails.send({
             from: 'onboarding@resend.dev',
-            to: 'jalyat.ar@gmail.com',
+            to: 'abdulsalam.hmdan@gmail.com',
             subject: "📢لديك حجز جديد ",
-            html: `
-        <h3>تم استلام حجز جديد ✅</h3>
-        <p><strong>الجهة:</strong> ${bookingData.entityName}</p>
-        <p><strong>الاسم:</strong> ${bookingData.bookerName}</p>
-        <p><strong>التاريخ:</strong> ${bookingData.date}</p>
-        <p><strong>الفترة:</strong> ${bookingData.timePeriod}</p>
-        <p><strong>نوع الحجز:</strong> ${bookingData.type}</p>
-        <a href='https://had-iwvj.onrender.com/admin'><strong>الذهاب للموقع</a>
-      `
+            html: minimized
         });
+        // console.log(html);
         console.log("✅ تم إرسال الإشعار بالبريد");
+        return true;
     } catch (error) {
         console.error("❌ فشل إرسال الإشعار:", error);
+        return false;
     }
 }
 
 app.get('/send', async function (req, res) {
-    sendBookingNotification()
-    res.send("done");
+    // res.render("email", { bookingData: {} })
+    res.send(sendBookingNotification() ? "done" : "faild");
 })
 app.get('/', async function (req, res) {
     res.render("welcom");
@@ -151,5 +155,5 @@ app.get('/logout', (req, res) => {
 
 const port = process.env.PORT || 3070;
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+    console.log(`http://localhost:${port}`);
 });
