@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,248 +56,402 @@
 
         .gradient-bg {
             /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
-            background: linear - gradient(135 deg, #f3f4e6 0 %, #989948 100%);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            background: linear-gradient(135deg, #f3f4e6 0%, #989948 100%);
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         .input-focus:focus {
-
-
-
-
-
-
-
-            border-color: # 989948;
-            box - shadow: 0 0 0 3 px rgba(152, 153, 72, 0.15);
+            border-color: #989948;
+            box-shadow: 0 0 0 3px rgba(152, 153, 72, 0.15);
         }
 
-        @media(max - width: 768 px) {
+        @media (max-width: 768px) {
 
             /* Make layout more compact on smaller screens */
             .container {
-                padding - left: 0 rem !important;
-                padding - right: 0 rem !important;
+                padding-left: 0rem !important;
+                padding-right: 0rem !important;
             }
 
             h1 {
-                font - size: 1.75 rem;
+                font-size: 1.75rem;
                 /* A bit smaller than text-3xl */
             }
 
             /* Adjust location buttons for smaller screens */
             #restBtn,
             #campBtn {
-                padding: 0.75 rem;
-                font - size: 0.875 rem;
+                padding: 0.75rem;
+                font-size: 0.875rem;
                 /* text-sm */
             }
 
             /* Make calendar more compact */
             #calendar {
-                gap: 0.25 rem;
+                gap: 0.25rem;
                 /* gap-1 */
             }
 
-            .calendar - day {
-                padding: 0.5 rem 0.1 rem;
+            .calendar-day {
+                padding: 0.5rem 0.1rem;
                 /* py-2 px-0.5 */
             }
 
-            .calendar - day.text - lg {
-                font - size: 0.875 rem;
+            .calendar-day .text-lg {
+                font-size: 0.875rem;
                 /* text-sm */
             }
 
-            .calendar - day.text - xs {
-                font - size: 0.6 rem;
-                line - height: 1.1;
+            .calendar-day .text-xs {
+                font-size: 0.6rem;
+                line-height: 1.1;
             }
 
             /* Adjust day headers */
-            #calendar>div: nth - child(-n + 7) {
-                font - size: 0.65 rem;
-                padding: 0.4 rem 0;
-                font - weight: 600;
+            #calendar>div:nth-child(-n+7) {
+                font-size: 0.65rem;
+                padding: 0.4rem 0;
+                font-weight: 600;
             }
         }
+    </style>
+</head>
 
-        < /style>< /head>< body class="bg-gray-50 min-h-screen">< !--Header-->< header class="gradient-bg text-white py-6 shadow-lg">< div class="container mx-auto px-6">< h1 class="text-3xl font-bold text-center text-slate-800">جمعية هاد للدعوة والارشاد < /h1>< p class="text-center mt-2 text-blue-100 text-slate-700">اختر نوع المكان ثم التاريخ المناسب لإجراء الحجز < /p>< /div>< /header>< !--Location Type Selection-->< div class="container mx-auto px-6 py-6">< div class="bg-white rounded-xl shadow-lg p-6 mb-6">< h2 class="text-xl font-bold text-gray-800 mb-4 text-center">اختر نوع المكان < /h2>< div class="flex justify-center gap-4">< button id="restBtn"
-        class="location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg">🏡الاستراحة < /button>< button id="campBtn"
-        class="location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gray-200 text-gray-600 border-2 border-gray-300">🏕️المخيم < /button>< /div>< div id="locationTitle"
-        class="text-center mt-4">< h3 class="text-2xl font-bold text-green-600">حجوزات الاستراحة < /h3>< /div>< /div>< /div>< div class="container mx-auto px-6 py-8">< div class="grid lg:grid-cols-3 gap-8">< !--Calendar Section-->< div class="lg:col-span-2">< div class="bg-white rounded-xl shadow-lg p-6">< div class="flex items-center justify-between mb-6">< h2 class="text-2xl font-bold text-gray-800">التقويم - الأيام المتاحة < /h2>< div class="flex gap-4 text-sm">< div class="flex items-center gap-2">< div class="w-4 h-4 bg-green-500 rounded">< /div>< span>متاح < /span>< /div>< div class="flex items-center gap-2">< div class="w-4 h-4 bg-orange-500 rounded">< /div>< span>محجوز جزئي < /span>< /div>< div class="flex items-center gap-2">< div class="w-4 h-4 bg-red-500 rounded">< /div>< span>محجوز < /span>< /div>< /div>< /div>< div id="calendar"
-        class="grid grid-cols-7 gap-3">< /div>< /div>< /div>< !--Booking Form Section-->< div class="lg:col-span-1">< div id="bookingForm"
-        class="bg-white rounded-xl shadow-lg p-6 hidden form-slide-in">< h3 class="text-xl font-bold text-gray-800 mb-6">نموذج الحجز < /h3>< p id="selectedDate"
-        class="text-blue-600 font-semibold mb-4">< /p>< form id="reservationForm"
-        class="space-y-4">< div>< label class="block text-sm font-semibold text-gray-700 mb-2">اسم الجهة الراغبة في الحجز * < /label>< input type="text"
-        name="entityName"
-        required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">< /div>< div>< label class="block text-sm font-semibold text-gray-700 mb-2">نوع الجهة * < /label>< select name="entityType"
-        required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">< option value="">اختر نوع الجهة < /option>< option value="حكومي">حكومي < /option>< option value="خاص">خاص < /option>< option value="خيري">خيري(جمعيات خيرية - حلقات - أندية تربوية) < /option>< /select>< /div>< div>< label class="block text-sm font-semibold text-gray-700 mb-2">اسم الشخص الذي قام بحجز المقر(ثلاثي) * < /label>< input type="text"
-        name="bookerName"
-        required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">< /div>< div>< label class="block text-sm font-semibold text-gray-700 mb-2">رقم الهوية للشخص الذي قام بحجز المقر * < /label>< input type="text"
-        name="idNumber"
-        required pattern="[0-9]{10}"
-        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        placeholder="10 أرقام">< /div>< div>< label class="block text-sm font-semibold text-gray-700 mb-2">جوال الشخص الذي قام بحجز المقر * < /label>< input type="tel"
-        name="bookerPhone"
-        required pattern="[0-9]{10}"
-        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        placeholder="05xxxxxxxx">< /div>< div>< label class="block text-sm font-semibold text-gray-700 mb-2">اسم المسؤول داخل البرنامج(المتواجد أثناء الإقامة بالمقر) * < /label>< input type="text"
-        name="managerName"
-        required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">< /div>< div>< label class="block text-sm font-semibold text-gray-700 mb-2">جوال المسؤول داخل البرنامج(المتواجد أثناء الإقامة بالمقر) * < /label>< input type="tel"
-        name="managerPhone"
-        required pattern="[0-9]{10}"
-        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        placeholder="05xxxxxxxx">< /div>< div>< label class="block text-sm font-semibold text-gray-700 mb-2">الفترة الزمنية * < /label>< select name="timePeriod"
-        required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">< option value="">اختر الفترة < /option>< option value="صباحي">صباحي < /option>< option value="مسائي">مسائي < /option>< option value="كامل اليوم">كلاهما < /option>< /select>< /div>< div class="grid grid-cols-2 gap-3">< div>< label class="block text-sm font-semibold text-gray-700 mb-2">وقت الدخول * < /label>< input type="time"
-        name="entryTime"
-        required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">< /div>< div>< label class="block text-sm font-semibold text-gray-700 mb-2">وقت الخروج * < /label>< input type="time"
-        name="exitTime"
-        required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">< /div>< /div>< div>< label class="block text-sm font-semibold text-gray-700 mb-2">العدد المتوقع للحضور * < /label>< input type="number"
-        name="expectedCount"
-        required min="1"
-        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        placeholder="عدد الأشخاص">< /div>< div>< label class="block text-sm font-semibold text-gray-700 mb-2">ملاحظات < /label>< input type="text"
-        name="notes"
-        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        placeholder="...">< /div>< div class="flex gap-3 pt-4">< button type="submit"
-        class="w-full bg-[#2b3b43] text-white py-3 px-4 rounded-lg font-medium hover:bg-[#989948] hover:text-[#2b3b43] transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">< !--class="flex-1 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105">-->تأكيد الحجز < /button>< button type="button"
-        id="cancelBtn"
-        class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors">إلغاء < /button>< /div>< /form>< /div>< !--Instructions-->< div id="instructions"
-        class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-100">< h3 class="text-lg font-bold text-gray-800 mb-3">مرفقات مخيم هاد < /h3>< ol class="space-y-2 text-sm text-gray-600">< li class="flex items-start gap-2">< span class="text-green-500 mt-1">🏕️ < /span>< h4>خيمة ضيافة عدد(2) < /h4>< /li>< li class="flex items-start gap-2">< span class="text-green-500 mt-1">🏕️ < /span>< span>قاعة استقبال تسع أكثر من(80 شخص) < /span>< /li>< li class="flex items-start gap-2">< span class="text-green-500 mt-1">🏕️ < /span>< span>صالة متعددة تحوي(صالة طعام - صالة ألعاب "تنس | فريرا...") < /span>< /li>< li class="flex items-start gap-2">< span class="text-green-500 mt-1">🏕️ < /span>< span>ملعب طائرة < /span>< /li>< li class="flex items-start gap-2">< span class="text-green-500 mt-1">🏕️ < /span>< span>دورات مياه < /span>< /li>< li class="flex items-start gap-2">< span class="text-green-500 mt-1">🏕️ < /span>< span>مطبخ < /span>< /li>< /ol>< h3 class="text-lg font-bold text-gray-800 mb-3">تعليمات الحجز < /h3>< ul class="space-y-2 text-sm text-gray-600">< li class="flex items-start gap-2">< span class="text-green-500 mt-1">✓ < /span>< span>اختر التاريخ المناسب من التقويم < /span>< /li>< li class="flex items-start gap-2">< span class="text-green-500 mt-1">✓ < /span>< span>املأ جميع البيانات المطلوبة < /span>< /li>< li class="flex items-start gap-2">< span class="text-green-500 mt-1">✓ < /span>< span>تأكد من صحة أرقام الهوية والجوال < /span>< /li>< li class="flex items-start gap-2">< span class="text-blue-500 mt-1">ℹ < /span>< span>الأيام المحجوزة(صباحي - مسائي) تظهر باللون الأحمر < /span>< /li>< li class="flex items-start gap-2">< span class="text-blue-500 mt-1">ℹ < /span>< span>تنتهي الفترة الصباحية في تمام الساعة 2: 30 م < /span>< /li>< /ul>< /div>< /div>< /div>< /div>< !--Success Modal-->< div id="successModal"
-        class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">< div class="bg-white rounded-xl p-8 max-w-md mx-4 text-center">< div class="text-green-500 text-6xl mb-4">✅ < /div>< h3 class="text-2xl font-bold text-gray-800 mb-2">تم الحجز بنجاح ! < /h3>< p class="text-gray-600 mb-6">تم تسجيل حجزك وسيتم التواصل معك قريباً < /p>< button id="closeModal"
-        class="bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors">حسناً < /button>< /div>< /div>< div id="loading"
-        class="fixed inset-0 bg-black bg-opacity-50 flex hidden items-center justify-center z-50">< div class="bg-white rounded-xl p-8 max-w-md mx-4 text-center">< h3 class="text-2xl font-bold text-gray-800 mb-2">يجري تأكيد حجزك < /h3>< !-- < p class="text-gray-600 mb-6">تم تسجيل حجزك وسيتم التواصل معك قريباً < /p>-->< /div>< /div>< script>let array=JSON.parse('<%- arr %>');
-        let blockedDays=JSON.parse('<%- block %>');
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-6 shadow-lg">
+        <div class="container mx-auto px-6">
+            <h1 class="text-3xl font-bold text-center text-slate-800">جمعية هاد للدعوة والارشاد</h1>
+            <p class="text-center mt-2 text-blue-100 text-slate-700">اختر نوع المكان ثم التاريخ المناسب لإجراء الحجز</p>
+        </div>
+    </header>
+
+    <!-- Location Type Selection -->
+    <div class="container mx-auto px-6 py-6">
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">اختر نوع المكان</h2>
+            <div class="flex justify-center gap-4">
+                <button id="restBtn"
+                    class="location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg">
+                    🏡 الاستراحة
+                </button>
+                <button id="campBtn"
+                    class="location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gray-200 text-gray-600 border-2 border-gray-300">
+                    🏕️ المخيم
+                </button>
+            </div>
+            <div id="locationTitle" class="text-center mt-4">
+                <h3 class="text-2xl font-bold text-green-600">حجوزات الاستراحة</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 py-8">
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Calendar Section -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">التقويم - الأيام المتاحة</h2>
+                        <div class="flex gap-4 text-sm">
+                            <div class="flex items-center gap-2">
+                                <div class="w-4 h-4 bg-green-500 rounded"></div>
+                                <span>متاح</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-4 h-4 bg-orange-500 rounded"></div>
+                                <span>محجوز جزئي</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-4 h-4 bg-red-500 rounded"></div>
+                                <span>محجوز</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="calendar" class="grid grid-cols-7 gap-3">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Form Section -->
+            <div class="lg:col-span-1">
+                <div id="bookingForm" class="bg-white rounded-xl shadow-lg p-6 hidden form-slide-in">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">نموذج الحجز</h3>
+                    <p id="selectedDate" class="text-blue-600 font-semibold mb-4"></p>
+                    <form id="reservationForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">اسم الجهة الراغبة في الحجز
+                                *</label>
+                            <input type="text" name="entityName" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">نوع الجهة *</label>
+                            <select name="entityType" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">اختر نوع الجهة</option>
+                                <option value="حكومي">حكومي</option>
+                                <option value="خاص">خاص</option>
+                                <option value="خيري">خيري(جمعيات خيرية - حلقات - أندية تربوية)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">اسم الشخص الذي قام بحجز المقر
+                                ( ثلاثي )
+                                *</label>
+                            <input type="text" name="bookerName" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">رقم الهوية للشخص الذي قام بحجز
+                                المقر *</label>
+                            <input type="text" name="idNumber" required pattern="[0-9]{10}"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="10 أرقام">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">جوال الشخص الذي قام بحجز المقر
+                                *</label>
+                            <input type="tel" name="bookerPhone" required pattern="[0-9]{10}"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="05xxxxxxxx">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">اسم المسؤول داخل البرنامج (
+                                المتواجد أثناء الإقامة بالمقر)
+                                *</label>
+                            <input type="text" name="managerName" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">جوال المسؤول داخل البرنامج (
+                                المتواجد أثناء الإقامة بالمقر)
+                                *</label>
+                            <input type="tel" name="managerPhone" required pattern="[0-9]{10}"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="05xxxxxxxx">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">الفترة الزمنية *</label>
+                            <select name="timePeriod" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">اختر الفترة</option>
+                                <option value="صباحي">صباحي</option>
+                                <option value="مسائي">مسائي</option>
+                                <option value="كامل اليوم">كلاهما</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">وقت الدخول *</label>
+                                <input type="time" name="entryTime" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">وقت الخروج *</label>
+                                <input type="time" name="exitTime" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">العدد المتوقع للحضور *</label>
+                            <input type="number" name="expectedCount" required min="1"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="عدد الأشخاص">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">ملاحظات
+                            </label>
+                            <input type="text" name="notes"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="...">
+                        </div>
+
+                        <div class="flex gap-3 pt-4">
+                            <button type="submit"
+                                class="w-full bg-[#2b3b43] text-white py-3 px-4 rounded-lg font-medium hover:bg-[#989948] hover:text-[#2b3b43] transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <!-- class="flex-1 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"> -->
+                                تأكيد الحجز
+                            </button>
+                            <button type="button" id="cancelBtn"
+                                class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
+                                إلغاء
+                            </button>
+                        </div>
+                    </form>
+
+
+                </div>
+
+                <!-- Instructions -->
+                <div id="instructions"
+                    class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-100">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">مرفقات مخيم هاد</h3>
+                    <ol class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">🏕️</span>
+                            <h4>خيمة ضيافة عدد ( 2 )</h4>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">🏕️</span>
+                            <span>قاعة استقبال تسع أكثر من ( 80 شخص )</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">🏕️</span>
+                            <span>صالحة متعددة تحوي ( صالة طعام - صالة ألعاب "تنس | فريرا..." )</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">🏕️</span>
+                            <span>ملعب طائرة</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">🏕️</span>
+                            <span>دورات مياه</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">🏕️</span>
+                            <span>مطبخ</span>
+                        </li>
+
+                    </ol>
+
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">تعليمات الحجز</h3>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">✓</span>
+                            <span>اختر التاريخ المناسب من التقويم</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">✓</span>
+                            <span>املأ جميع البيانات المطلوبة</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">✓</span>
+                            <span>تأكد من صحة أرقام الهوية والجوال</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-blue-500 mt-1">ℹ</span>
+                            <span>الأيام المحجوزة تظهر باللون الأحمر</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-blue-500 mt-1">ℹ</span>
+                            <span>تنتهي الفترة الصباحية في تمام الساعة 2:30م</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md mx-4 text-center">
+            <div class="text-green-500 text-6xl mb-4">✅</div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">تم الحجز بنجاح!</h3>
+            <p class="text-gray-600 mb-6">تم تسجيل حجزك وسيتم التواصل معك قريباً</p>
+            <button id="closeModal"
+                class="bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors">
+                حسناً
+            </button>
+        </div>
+    </div>
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md mx-4 text-center">
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">يجري تأكيد حجزك</h3>
+            <!-- <p class="text-gray-600 mb-6">تم تسجيل حجزك وسيتم التواصل معك قريباً</p> -->
+        </div>
+    </div>
+
+    <script>
+        let array = JSON.parse('<%-arr%>');
+        let blockedDays = JSON.parse('<%-block%>');
         // let blockedDays = [1,2,3];
-        let currentLocation='الاستراحة'; // 'rest' or 'camp'
-        let selectedDateElement=null;
-        let theSelectedDate=null;
-        let starting=null;
+        let currentLocation = 'الاستراحة'; // 'rest' or 'camp'
+        let selectedDateElement = null;
+        let theSelectedDate = null;
+        let starting = null;
         // Generate calendar for next 30 days
-        const todayS=new Date().toISOString().split('T')[0];
-        const today=new Date(todayS);
+        const todayS = new Date().toISOString().split('T')[0];
+        const today = new Date(todayS);
 
         generateCalendar(today);
 
         function generateCalendar(startDay) {
-            starting=startDay;
-            const calendar=document.getElementById('calendar');
+            starting = startDay;
+            const calendar = document.getElementById('calendar');
             // Set today as current date
 
             // Clear existing calendar
-            calendar.innerHTML='';
+            calendar.innerHTML = '';
 
             // Add day headers
-            const dayHeaders=['الأحد',
-            'الاثنين',
-            'الثلاثاء',
-            'الأربعاء',
-            'الخميس',
-            'الجمعة',
-            'السبت'
-            ];
-            const months=['يناير',
-            'فبراير',
-            'مارس',
-            'أبريل',
-            'مايو',
-            'يونيو',
-            'يوليو',
-            "أغسطس",
-            "سبتمبر",
-            "أكتوبر",
-            "نوفمبر",
-            "ديسمبر"
-            ];
-
-            dayHeaders.forEach(day=> {
-                    const header=document.createElement('div');
-                    header.className='text-center font-semibold text-gray-600 py-2';
-                    header.textContent=day;
-                    calendar.appendChild(header);
-                });
-
+            const dayHeaders = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+            dayHeaders.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'text-center font-semibold text-gray-600 py-2';
+                header.textContent = day;
+                calendar.appendChild(header);
+            });
             // Get current booked dates based on location
-            for (let i=startDay.getDay(); i > 0; i--) {
-                const date=new Date(startDay);
+            for (let i = startDay.getDay(); i > 0; i--) {
+                const date = new Date(startDay);
                 date.setDate(startDay.getDate() - i);
-                const dayElement=document.createElement('div');
-                dayElement.className='calendar-day p-4 rounded-lg text-center font-semibold bg-gray-200 text-gray-400 cursor-not-allowed';
-                dayElement.innerHTML=` <div class="text-lg">${date.getDate()}</div><div class="text-xs mt-1">${months[date.getMonth()]}</div><div class="text-xs mt-1">منتهي</div>`;
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day p-4 rounded-lg text-center font-semibold bg-gray-200 text-gray-400 cursor-not-allowed';
+                dayElement.innerHTML = `
+                    <div class="text-lg">${date.getDate()}</div>
+                    <div class="text-xs mt-1">${months[date.getMonth()]}</div>
+                    <div class="text-xs mt-1">منتهي</div>
+                `;
                 calendar.appendChild(dayElement);
             }
-
             // Generate 30 days starting from today
-            const select=document.querySelector('select[name="timePeriod"]');
-
-            for (let i=0; i < 30; i++) {
-                const date=new Date(startDay);
+            const select = document.querySelector('select[name="timePeriod"]');
+            for (let i = 0; i < 30; i++) {
+                const date = new Date(startDay);
                 date.setDate(startDay.getDate() + i);
-                const dateString=date.toISOString().split('T')[0];
-                const mhjoze=array.filter(x=> x.date==dateString && x.type==currentLocation);
-                const blocked=blockedDays.filter(x=> x.dayOfWeek==date.getDay() && x.type==currentLocation && isTodayBetween(x.startDate, x.endDate, date));
+                const dateString = date.toISOString().split('T')[0];
+                const mhjoze = array.filter(x => x.date == dateString && x.type == currentLocation);
+                const blocked = blockedDays.filter(x => x.dayOfWeek == date.getDay() && x.type == currentLocation && isTodayBetween(x.startDate, x.endDate, date));
                 // const exists = mhjoze.length > 0 || blocked.length > 0;
-                const dayElement=document.createElement('div');
-
+                const dayElement = document.createElement('div');
                 // dayElement.style = "background: linear-gradient(to bottom, red 50%, green 50%);"
                 // dayElement.style = "background: linear-gradient(to bottom, green 50%, red 50%);"
-                const {
-                    class: cl,
-                        text
-                }
+                const { class: cl, text } = check([...mhjoze, ...blocked]);
+                dayElement.className = `calendar-day py-4 rounded-lg text-center font-semibold ${cl} ${i === 0 ? 'ring-2 ring-blue-400' : ''}`;
 
-                =check([...mhjoze, ...blocked]);
-                dayElement.className=`calendar-day py-4 rounded-lg text-center font-semibold ${cl} ${i === 0 ? 'ring-2 ring-blue-400' : ''}`;
+                dayElement.innerHTML = `
+                    <div class="text-lg">${date.getDate()}</div>
+                    <div class="text-xs mt-1">${months[date.getMonth()]}</div>
+                    <div class="text-xs mt-1">${text}</div>
+                `;
 
-                dayElement.innerHTML=` <div class="text-lg">${date.getDate()}</div><div class="text-xs mt-1">${months[date.getMonth()]}</div><div class="text-xs mt-1">${text}</div>`;
+                if (cl !== "full-booked") {
+                    dayElement.addEventListener('click', () => {
+                        if (cl !== "available") {
+                            select.value = text == "متاح صباحا" ? "صباحي" : "مسائي";
+                            select.disabled = true;
+                            setPeriod();
+                        } else {
+                            select.value = "";
+                            select.disabled = false;
+                            setPeriod();
 
-                if (cl !=="full-booked") {
-                    dayElement.addEventListener('click', ()=> {
-                            if (cl !=="available") {
-                                select.value=text=="متاح صباحا" ? "صباحي" : "مسائي";
-                                select.disabled=true;
-                                setPeriod();
-                            }
-
-                            else {
-                                select.value="";
-                                select.disabled=false;
-                                setPeriod();
-
-                            }
-
-                            theSelectedDate=dateString;
-                            selectDate(dayElement, date)
-                        });
+                        }
+                        theSelectedDate = dateString;
+                        selectDate(dayElement, date)
+                    });
                 }
 
                 calendar.appendChild(dayElement);
@@ -305,42 +460,28 @@
 
 
         function check(arr) {
-            if (arr.length >=2 || (arr.length==1 && arr["timePeriod"]=="كامل اليوم")) {
-                return {
-                    "class": "full-booked",
-                        "text": "محجوز"
-                }
+            if (arr.length >= 2 || (arr.length == 1 && arr["timePeriod"] == "كامل اليوم")) {
+                return { "class": "full-booked", "text": "محجوز" }
             }
-
-            if (arr.length==1) {
-                return {
-                    "class": "booked",
-                    "text": `متاح ${arr[0]["timePeriod"] == "صباحي" ? "مساءا" : "صباحا"}`
-                }
+            if (arr.length == 1) {
+                return { "class": "booked", "text": `متاح ${arr[0]["timePeriod"] == "صباحي" ? "مساءا" : "صباحا"}` }
             }
-
-            return {
-                "class": "available",
-                    "text": "متاح"
-            }
+            return { "class": "available", "text": "متاح" }
         }
 
         function isTodayBetween(startDate, endDate, check) {
             // const [sd, sm, sy] = startDateStr.split('-').map(Number);
-            startDate=new Date(startDate);
+            startDate = new Date(startDate);
 
             // إذا فيه تاريخ نهاية نحوله، وإذا لا نخليه null
             if (endDate) {
-                endDate=new Date(endDate);
+                endDate = new Date(endDate);
             }
-
             // التحقق
             if (endDate) {
-                return check>=startDate && check <=endDate;
-            }
-
-            else {
-                return check>=startDate;
+                return check >= startDate && check <= endDate;
+            } else {
+                return check >= startDate;
             }
         }
 
@@ -348,28 +489,18 @@
         // Helper function to get Hijri month names
         function getHijriMonth(date) {
             // Simple approximation - in real app you'd use proper Hijri conversion
-            const hijriMonths=['محرم',
-            'صفر',
-            'ربيع الأول',
-            'ربيع الآخر',
-            'جمادى الأولى',
-            'جمادى الآخرة',
-            'رجب',
-            'شعبان',
-            'رمضان',
-            'شوال',
-            'ذو القعدة',
-            'ذو الحجة'
+            const hijriMonths = [
+                'محرم', 'صفر', 'ربيع الأول', 'ربيع الآخر', 'جمادى الأولى', 'جمادى الآخرة',
+                'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'
             ];
 
             // For December 2024, we're in Rabi' al-Akhir (4th month)
             // This is a simplified mapping - real implementation would use proper Hijri calendar
-            const currentMonth=date.getMonth(); // 0-11
-            const currentDay=date.getDate();
+            const currentMonth = date.getMonth(); // 0-11
+            const currentDay = date.getDate();
 
-            if (currentMonth===11) {
-                // December
-                if (currentDay <=10) return 'ربيع الآخر';
+            if (currentMonth === 11) { // December
+                if (currentDay <= 10) return 'ربيع الآخر';
                 else return 'جمادى الأولى';
             }
 
@@ -378,143 +509,123 @@
         }
 
         function selectDate(element, date) {
-
             // Remove previous selection
             if (selectedDateElement) {
                 selectedDateElement.classList.remove('ring-4', 'ring-yellow-400');
             }
-
             // Add selection to new element
             element.classList.add('ring-4', 'ring-yellow-400');
-            selectedDateElement=element;
+            selectedDateElement = element;
 
             // Show booking form
-            const bookingForm=document.getElementById('bookingForm');
-            const instructions=document.getElementById('instructions');
-            const selectedDateDisplay=document.getElementById('selectedDate');
+            const bookingForm = document.getElementById('bookingForm');
+            const instructions = document.getElementById('instructions');
+            const selectedDateDisplay = document.getElementById('selectedDate');
 
-            selectedDateDisplay.textContent=`التاريخ المحدد: ${date.toLocaleDateString('ar-SA', {
- weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        })
-        }
+            selectedDateDisplay.textContent = `التاريخ المحدد: ${date.toLocaleDateString('ar-SA', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            })}`;
 
-        `;
+            bookingForm.classList.remove('hidden');
+            instructions.classList.add('hidden');
 
-        bookingForm.classList.remove('hidden');
-        instructions.classList.add('hidden');
-
-        // Smooth scroll to booking form
-        setTimeout(()=> {
+            // Smooth scroll to booking form
+            setTimeout(() => {
                 bookingForm.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start'
                 });
-        }
-
-        , 100);
+            }, 100);
         }
 
         // Store selected date info
 
         // Handle form submission
-        document.getElementById('reservationForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                // Show success modal
-                const formValues=printFormValues();
-                document.getElementById('loading').classList.remove('hidden');
-                var data=new URLSearchParams();
-                data.append('collection', 'hjz');
-                data.append('data', JSON.stringify(formValues));
-
-                fetch('saveHjz', {
-
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                    }
-
-                    ,
-                    body: data
-
-                }).then(()=> {
-                    array.push(formValues) document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('successModal').classList.remove('hidden');
-                    document.getElementById('successModal').classList.add('flex');
-                    generateCalendar(starting);
-
-                }).catch(()=> {
-                    alert("حصلت مشكلة في حفظ البيانات قد تضطر الى اعادة الادخال");
-                    location.reload();
-                })
+        document.getElementById('reservationForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            // Show success modal
+            const formValues = printFormValues();
+            document.getElementById('loading').classList.remove('hidden');
+            var data = new URLSearchParams();
+            data.append('collection', 'hjz');
+            data.append('data', JSON.stringify(formValues));
+            fetch('saveHjz', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: data
+            }).then(() => {
+                array.push(formValues)
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('successModal').classList.remove('hidden');
+                document.getElementById('successModal').classList.add('flex');
+                generateCalendar(starting);
+            }).catch(() => {
+                alert("حصلت مشكلة في حفظ البيانات قد تضطر الى اعادة الادخال");
+                location.reload();
+            })
         });
 
         // Function to print form values as an object to the console
         function printFormValues() {
-            const form=document.getElementById('reservationForm');
-            const formData=new FormData(form);
-
-            const formValues= {}
-
-            ;
-
+            const form = document.getElementById('reservationForm');
+            const formData = new FormData(form);
+            const formValues = {};
             for (let [key, value] of formData.entries()) {
-                formValues[key]=value;
+                formValues[key] = value;
             }
-
-            formValues["type"]=currentLocation;
-            formValues["date"]=theSelectedDate;
-            formValues["accepted"]="pending";
+            formValues["type"] = currentLocation;
+            formValues["date"] = theSelectedDate;
+            formValues["accepted"] = "pending";
             return formValues;
         }
 
 
 
         // Handle cancel button
-        document.getElementById('cancelBtn').addEventListener('click', function() {
-                document.getElementById('bookingForm').classList.add('hidden');
-                document.getElementById('instructions').classList.remove('hidden');
+        document.getElementById('cancelBtn').addEventListener('click', function () {
+            document.getElementById('bookingForm').classList.add('hidden');
+            document.getElementById('instructions').classList.remove('hidden');
 
-                if (selectedDateElement) {
-                    selectedDateElement.classList.remove('ring-4', 'ring-yellow-400');
-                    selectedDateElement=null;
-                }
-            });
+            if (selectedDateElement) {
+                selectedDateElement.classList.remove('ring-4', 'ring-yellow-400');
+                selectedDateElement = null;
+            }
+        });
 
         // Handle modal close
-        document.getElementById('closeModal').addEventListener('click', function() {
-                document.getElementById('successModal').classList.add('hidden');
-                document.getElementById('successModal').classList.remove('flex');
-                document.getElementById('bookingForm').classList.add('hidden');
-                document.getElementById('instructions').classList.remove('hidden');
-                document.getElementById('reservationForm').reset();
-
-                if (selectedDateElement) {
-                    selectedDateElement.classList.remove('ring-4', 'ring-yellow-400');
-                    selectedDateElement=null;
-                }
-            });
+        document.getElementById('closeModal').addEventListener('click', function () {
+            document.getElementById('successModal').classList.add('hidden');
+            document.getElementById('successModal').classList.remove('flex');
+            document.getElementById('bookingForm').classList.add('hidden');
+            document.getElementById('instructions').classList.remove('hidden');
+            document.getElementById('reservationForm').reset();
+            if (selectedDateElement) {
+                selectedDateElement.classList.remove('ring-4', 'ring-yellow-400');
+                selectedDateElement = null;
+            }
+        });
 
         // Handle location type buttons
         function switchLocation(locationType) {
-            currentLocation=locationType;
+            currentLocation = locationType;
 
-            const restBtn=document.getElementById('restBtn');
-            const campBtn=document.getElementById('campBtn');
-            const locationTitle=document.getElementById('locationTitle');
+            const restBtn = document.getElementById('restBtn');
+            const campBtn = document.getElementById('campBtn');
+            const locationTitle = document.getElementById('locationTitle');
 
-            if (locationType==='الاستراحة') {
-                restBtn.className='location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg';
-                campBtn.className='location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gray-200 text-gray-600 border-2 border-gray-300';
-                locationTitle.innerHTML='<h3 class="text-2xl font-bold text-green-600">حجوزات الاستراحة</h3>';
-            }
-
-            else {
-                campBtn.className='location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg';
-                restBtn.className='location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gray-200 text-gray-600 border-2 border-gray-300';
-                locationTitle.innerHTML='<h3 class="text-2xl font-bold text-orange-600">حجوزات المخيم</h3>';
+            if (locationType === 'الاستراحة') {
+                restBtn.className = 'location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg';
+                campBtn.className = 'location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gray-200 text-gray-600 border-2 border-gray-300';
+                locationTitle.innerHTML = '<h3 class="text-2xl font-bold text-green-600">حجوزات الاستراحة</h3>';
+            } else {
+                campBtn.className = 'location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg';
+                restBtn.className = 'location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gray-200 text-gray-600 border-2 border-gray-300';
+                locationTitle.innerHTML = '<h3 class="text-2xl font-bold text-orange-600">حجوزات المخيم</h3>';
             }
 
             // Hide booking form if open
@@ -524,42 +635,37 @@
             // Clear selection
             if (selectedDateElement) {
                 selectedDateElement.classList.remove('ring-4', 'ring-yellow-400');
-                selectedDateElement=null;
+                selectedDateElement = null;
             }
 
             // Regenerate calendar
             generateCalendar(starting);
         }
-
-        const periodSelect=document.querySelector('select[name="timePeriod"]');
+        const periodSelect = document.querySelector('select[name="timePeriod"]');
         periodSelect.addEventListener("change", setPeriod);
-
         function setPeriod() {
-            const entryInput=document.querySelector('input[name="entryTime"]');
-            const exitInput=document.querySelector('input[name="exitTime"]');
-            const value=periodSelect.value;
-
-            console.log(value) if (value==="صباحي") {
-                entryInput.min="04:00";
-                entryInput.max="14:30";
-                exitInput.min="04:00";
-                exitInput.max="14:30";
+            const entryInput = document.querySelector('input[name="entryTime"]');
+            const exitInput = document.querySelector('input[name="exitTime"]');
+            const value = periodSelect.value;
+            console.log(value)
+            if (value === "صباحي") {
+                entryInput.min = "04:00";
+                entryInput.max = "14:30";
+                exitInput.min = "04:00";
+                exitInput.max = "14:30";
             }
-
-            else if (value==="مسائي") {
-                entryInput.min="15:00";
-                entryInput.max="23:59";
-                exitInput.min="15:00";
-                exitInput.max="23:59";
+            else if (value === "مسائي") {
+                entryInput.min = "15:00";
+                entryInput.max = "23:59";
+                exitInput.min = "15:00";
+                exitInput.max = "23:59";
             }
-
-            else if (value==="كامل اليوم") {
-                entryInput.min="04:00";
-                entryInput.max="23:59";
-                exitInput.min="04:00";
-                exitInput.max="23:59";
+            else if (value === "كامل اليوم") {
+                entryInput.min = "04:00";
+                entryInput.max = "23:59";
+                exitInput.min = "04:00";
+                exitInput.max = "23:59";
             }
-
             else {
                 // لو رجع اختار "اختر الفترة"
                 entryInput.removeAttribute("min");
@@ -567,51 +673,16 @@
                 exitInput.removeAttribute("min");
                 exitInput.removeAttribute("max");
             }
-
             // تنظيف القيم القديمة إذا كانت خارج النطاق
-            entryInput.value="";
-            exitInput.value="";
+            entryInput.value = "";
+            exitInput.value = "";
         }
 
         // Add event listeners for location buttons
-        document.getElementById('restBtn').addEventListener('click', ()=> switchLocation('الاستراحة'));
-        document.getElementById('campBtn').addEventListener('click', ()=> switchLocation('المخيم'));
+        document.getElementById('restBtn').addEventListener('click', () => switchLocation('الاستراحة'));
+        document.getElementById('campBtn').addEventListener('click', () => switchLocation('المخيم'));
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9843fa8a81a7e3b2',t:'MTc1ODczNDcwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
 
-        < /script>< script>(function() {
-
-                function c() {
-                    var b=a.contentDocument || a.contentWindow.document;
-
-                    if (b) {
-                        var d=b.createElement('script');
-                        d.innerHTML="window.__CF$cv$params={r:'9843fa8a81a7e3b2',t:'MTc1ODczNDcwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-                        b.getElementsByTagName('head')[0].appendChild(d)
-                    }
-                }
-
-                if (document.body) {
-                    var a=document.createElement('iframe');
-                    a.height=1;
-                    a.width=1;
-                    a.style.position='absolute';
-                    a.style.top=0;
-                    a.style.left=0;
-                    a.style.border='none';
-                    a.style.visibility='hidden';
-                    document.body.appendChild(a);
-                    if ('loading' !==document.readyState) c();
-                    else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c);
-
-                    else {
-                        var e=document.onreadystatechange || function() {}
-
-                        ;
-
-                        document.onreadystatechange=function(b) {
-                            e(b);
-                            'loading' !==document.readyState && (document.onreadystatechange=e, c())
-                        }
-                    }
-                }
-            })();
-        < /script>< /body>< /html>
+</html>
