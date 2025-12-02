@@ -16,7 +16,7 @@ const { MongoClient, ObjectId } = require('mongodb');
 const ejs = require('ejs');
 const url = "mongodb+srv://family:aS0507499583@cluster0.dvljyns.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(url);
-const resend = new Resend('re_3ZjE8aHS_PUbPf4uQ6hSeLBrmNk9YvYNw');
+const resend = new Resend('re_GFZ3sUGo_GUVWhPR4AWWPDbtFKi1uW43J');
 const { minify } = require('html-minifier');
 
 
@@ -32,7 +32,7 @@ async function sendBookingNotification(bookingData = {}) {
         });
         await resend.emails.send({
             from: 'onboarding@resend.dev',
-            to: 'abdulsalam.hmdan@gmail.com',
+            to: 'alqsmalrbyhad@gmail.com',
             subject: "📢لديك حجز جديد ",
             html: minimized
         });
