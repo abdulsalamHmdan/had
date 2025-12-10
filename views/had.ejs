@@ -153,6 +153,7 @@
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-2xl font-bold text-gray-800">التقويم - الأيام المتاحة</h2>
+                        
                         <div class="flex gap-4 text-sm">
                             <div class="flex items-center gap-2">
                                 <div class="w-4 h-4 bg-green-500 rounded"></div>
@@ -167,6 +168,13 @@
                                 <span>محجوز</span>
                             </div>
                         </div>
+                    </div>
+                    
+                    <!-- Month Selector -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">اختر الشهر</label>
+                        <select id="monthSelector" class="w-full md:w-48 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </select>
                     </div>
 
                     <div id="calendar" class="grid grid-cols-7 gap-3">
@@ -383,8 +391,71 @@
         // Generate calendar for next 30 days
         const todayS = new Date().toISOString().split('T')[0];
         const today = new Date(todayS);
-
-        generateCalendar(today);
+        
+        // Month names in Arabic
+        const monthsNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+        
+        // Initialize month selector
+        function initializeMonthSelector() {
+            const monthSelector = document.getElementById('monthSelector');
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            let defaultSelected = currentMonth;
+            
+            // Populate all 12 months
+            for (let i = 0; i < 12; i++) {
+                const month = (currentMonth + i) % 12;
+                const year = currentYear + Math.floor((currentMonth + i) / 12);
+                const option = document.createElement('option');
+                option.value = JSON.stringify({ month, year });
+                option.textContent = `${monthsNames[month]} ${year}`;
+                
+                // Auto-select current month or next month if current is finished
+                if (i === 0) {
+                    option.selected = true;
+                    defaultSelected = 0;
+                }
+                
+                monthSelector.appendChild(option);
+            }
+            
+            // Check if current month has any available days left
+            checkAndUpdateDefaultMonth();
+            
+            // Add event listener
+            monthSelector.addEventListener('change', function () {
+                const selected = JSON.parse(this.value);
+                const newStartDate = new Date(selected.year, selected.month, 1);
+                generateCalendar(newStartDate);
+            });
+        }
+        
+        // Check if current month has ended and switch to next month if needed
+        function checkAndUpdateDefaultMonth() {
+            const monthSelector = document.getElementById('monthSelector');
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            const daysInCurrentMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const lastDayOfCurrentMonth = new Date(currentYear, currentMonth, daysInCurrentMonth);
+            
+            // If today is after the 25th of the month (month is ending), select next month
+            if (today.getDate() > 25) {
+                const nextMonthIndex = 1;
+                if (monthSelector.options[nextMonthIndex]) {
+                    monthSelector.selectedIndex = nextMonthIndex;
+                    const selected = JSON.parse(monthSelector.options[nextMonthIndex].value);
+                    const newStartDate = new Date(selected.year, selected.month, 1);
+                    generateCalendar(newStartDate);
+                    return;
+                }
+            }
+            
+            // Otherwise generate calendar for current month
+            generateCalendar(today);
+        }
+        
+        // Initialize on page load
+        initializeMonthSelector();
 
         function generateCalendar(startDay) {
             starting = startDay;
@@ -676,6 +747,16 @@
             // تنظيف القيم القديمة إذا كانت خارج النطاق
             entryInput.value = "";
             exitInput.value = "";
+        }
+
+        // Handle month selector
+        const monthSelector = document.getElementById('monthSelector');
+        if (monthSelector) {
+            monthSelector.addEventListener('change', function () {
+                const selected = JSON.parse(this.value);
+                const newStartDate = new Date(selected.year, selected.month, 1);
+                generateCalendar(newStartDate);
+            });
         }
 
         // Add event listeners for location buttons
