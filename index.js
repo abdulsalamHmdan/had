@@ -124,7 +124,8 @@ app.post('/delete', async function (req, res) {
 
 
 app.post('/login', express.urlencoded({ extended: false }), function (req, res) {
-    if (req.body.user == "1014772139" && req.body.pass == "0505152317") {
+    console.log(req.body);
+    if (req.body.user == "1014772139" && req.body.pass == +"0505152317") {
         req.session.regenerate(function (err) {
             if (err) next(err)
             req.session.admin = true
