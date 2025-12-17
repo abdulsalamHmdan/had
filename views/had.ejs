@@ -409,9 +409,7 @@
                 const option = document.createElement('option');
                 option.value = JSON.stringify({ month, year });
                 option.textContent = `${monthsNames[month]} ${year}`;
-                
-                // Auto-select current month or next month if current is finished
-                if (i === 0) {
+                                if (i === 0) {
                     option.selected = true;
                     defaultSelected = 0;
                     option.textContent = "الشهر الحالي "
