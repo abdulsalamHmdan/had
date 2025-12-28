@@ -486,11 +486,21 @@
                 `;
                 calendar.appendChild(dayElement);
             }
-            // Generate 30 days starting from today
+            // Generate days starting from first day of month until end of month or 31 days
             const select = document.querySelector('select[name="timePeriod"]');
-            for (let i = 0; i < 30; i++) {
+            const monthOfStartDay = startDay.getMonth();
+            const yearOfStartDay = startDay.getFullYear();
+            const daysInMonth = new Date(yearOfStartDay, monthOfStartDay + 1, 0).getDate();
+            
+            for (let i = 0; i < 31; i++) {
                 const date = new Date(startDay);
                 date.setDate(startDay.getDate() + i);
+                
+                // Stop if we've gone past the last day of the month
+                if (date.getMonth() !== monthOfStartDay) {
+                    break;
+                }
+                
                 const dateString = date.toISOString().split('T')[0];
                 const mhjoze = array.filter(x => x.date == dateString && x.type == currentLocation);
                 const blocked = blockedDays.filter(x => x.dayOfWeek == date.getDay() && x.type == currentLocation && isTodayBetween(x.startDate, x.endDate, date));
