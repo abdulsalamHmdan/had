@@ -1,88 +1,117 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>نظام الحجوزات-هاد</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+      @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap");
 
-        * {
-            font-family: 'Cairo', sans-serif;
+      * {
+        font-family: "Cairo", sans-serif;
+      }
+
+      .gradient-bg {
+        background: linear-gradient(135deg, #f3f4e6 0%, #989948 100%);
+      }
+
+      .card-shadow {
+        box-shadow: 0 20px 25px -5px rgba(43, 59, 67, 0.08),
+          0 10px 10px -5px rgba(152, 153, 72, 0.04);
+      }
+
+      .input-focus:focus {
+        border-color: #989948;
+        box-shadow: 0 0 0 3px rgba(152, 153, 72, 0.15);
+      }
+
+      .error-message {
+        animation: shake 0.5s ease-in-out;
+      }
+
+      #cont {
+        padding-top: 0;
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
         }
 
-        .gradient-bg {
-            background: linear-gradient(135deg, #f3f4e6 0%, #989948 100%);
+        25% {
+          transform: translateX(-5px);
         }
 
-        .card-shadow {
-            box-shadow: 0 20px 25px -5px rgba(43, 59, 67, 0.08), 0 10px 10px -5px rgba(152, 153, 72, 0.04);
+        75% {
+          transform: translateX(5px);
         }
-
-        .input-focus:focus {
-            border-color: #989948;
-            box-shadow: 0 0 0 3px rgba(152, 153, 72, 0.15);
-        }
-
-        .error-message {
-            animation: shake 0.5s ease-in-out;
-        }
-
-        #cont {
-            padding-top: 0;
-        }
-
-        @keyframes shake {
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            25% {
-                transform: translateX(-5px);
-            }
-
-            75% {
-                transform: translateX(5px);
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
+  <body class="gradient-bg min-h-screen flex items-center justify-center p-4">
     <div id="cont" class="bg-white rounded-2xl card-shadow w-full max-w-md p-8">
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <img style="width: 366px;margin-inline: auto;margin-bottom: 15px;" src="logo.png">
-            <!-- <h1 class="text-2xl font-bold mb-4" style="color:#2b3b43;">تسجيل الدخول</h1> -->
-            <div class="bg-[#f3f4e6] rounded-lg p-4 text-right">
-                <p class="text-lg leading-relaxed" style="color:#2b3b43;">
-                    جمعية هاد للدعوة والإرشاد وتوعية الجاليات تتشرف باستضافتكم في مقراتها والاستفادة منها . وهذا النموذج
-                    لمساعدتنا في ضبط الاستفادة من مرتادي المقرات ( مخيم هاد ـ واستراحة هاد ( الغنايم سابقاً ) ونتمنى من
-                    الجميع المحافظة على المقرات والنظافة والتقيد بالتعليمات ونسعد ونتشرف بكم في كل وقت
-                </p>
-            </div>
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <img
+          style="width: 366px; margin-inline: auto; margin-bottom: 15px"
+          src="logo.png"
+        />
+        <!-- <h1 class="text-2xl font-bold mb-4" style="color:#2b3b43;">تسجيل الدخول</h1> -->
+        <div class="bg-[#f3f4e6] rounded-lg p-4 text-right">
+          <p class="text-lg leading-relaxed" style="color: #2b3b43">
+            جمعية هاد للدعوة والإرشاد وتوعية الجاليات تتشرف باستضافتكم في
+            مقراتها والاستفادة منها . وهذا النموذج لمساعدتنا في ضبط الاستفادة من
+            مرتادي المقرات ( مخيم هاد ـ واستراحة هاد ( الغنايم سابقاً ) ونتمنى
+            من الجميع المحافظة على المقرات والنظافة والتقيد بالتعليمات ونسعد
+            ونتشرف بكم في كل وقت
+          </p>
         </div>
+      </div>
 
-        <!-- Login Form -->
-        <form id="loginForm" class="space-y-6" action="/hjz">
-            <!-- Login Button -->
-            <button type="submit" id="loginBtn"
-                class="w-full bg-[#2b3b43] text-white py-3 px-4 rounded-lg font-medium hover:bg-[#989948] hover:text-[#2b3b43] transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
-                <span id="loginBtnText">الانتقال الى صفحة الحجوزات</span>
-            </button>
+      <!-- Login Form -->
+      <div id="loginForm" class="space-y-6">
+        <!-- Login Button -->
+        <button
+          id="loginBtn"
+          class="w-full bg-[#2b3b43] text-white py-3 px-4 rounded-lg font-medium hover:bg-[#989948] hover:text-[#2b3b43] transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span id="loginBtnText">الانتقال الى صفحة الحجوزات</span>
+        </button>
 
-            <!-- Sign Up Link -->
-            <div class="text-center">
-                <p class="text-sm" style="color:#2b3b43;">
-                    <a href="/admin" id="signUpLink"
-                        class="font-medium transition-colors" style="color:#2b3b43;">الانتقال الى صفحة <span style="color:#989948;">مسؤول النظام</span></a>
-                </p>
-            </div>
-        </form>
+        <!-- Sign Up Link -->
+        <div class="text-center">
+          <p class="text-sm" style="color: #2b3b43">
+            <a
+              href="/admin"
+              id="signUpLink"
+              class="font-medium transition-colors"
+              style="color: #2b3b43"
+              >الانتقال الى صفحة
+              <span style="color: #989948">مسؤول النظام</span></a
+            >
+          </p>
+        </div>
+      </div>
     </div>
-</body>
-
+  </body>
+  <script>
+    document
+      .getElementById("loginForm")
+      .addEventListener("click", function (e) {
+        Swal.fire({
+          title: "( تنبيه هام  ) ",
+          text: "نأمل التنسيق مع المسؤول عن الحجوزات قبل الحجز  على الرقم  (0554559909) أ / عبدالله بن عبدالعزيز الجطيلي",
+          icon: "warning",
+          confirmButtonText: "موافق",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "/hjz";
+          }
+        });
+      });
+  </script>
 </html>
