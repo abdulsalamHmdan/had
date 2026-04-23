@@ -158,6 +158,48 @@ app.get('/logout', (req, res) => {
 });
 
 
+
+const cookieParser = require('cookie-parser');
+const crypto = require('crypto');
+app.use(cookieParser());
+
+
+app.use(cookieParser());
+
+// الروابط الخمسة
+const links = [
+  'https://youtube.com/shorts/PxU48dh-Qlc',
+  'https://youtube.com/shorts/WBh5mNcP6bg',
+  'https://youtube.com/shorts/glVS1fLopHc',
+  'https://youtube.com/shorts/AoucqvZgGGU',
+  'https://youtube.com/shorts/h21xRQnTqOo',
+  'https://youtube.com/shorts/4gnxaiQqDxE',
+  'https://youtube.com/shorts/OTenaEmFqSU',
+];
+
+app.get('/qr', (req, res) => {
+  let idx;
+  // إذا الزائر عنده كوكي محفوظة، استخدمها
+  if (req.cookies.redirectIndex !== undefined) {
+    idx = parseInt(req.cookies.redirectIndex, 10);
+  } else {
+    // اختيار عشوائي وتخزينه في الكوكي
+    idx = crypto.randomInt(0, links.length);
+    res.cookie('redirectIndex', idx, {
+      maxAge: 1000 * 60 * 60 * 24 * 30, // شهر
+      httpOnly: true
+    });
+  }
+
+  const target = links[idx];
+  res.set('X-Redirect-Index', String(idx));
+  res.redirect(target);
+});
+app.get('/qr/links', (req, res) => {
+  res.json({ count: links.length, links });
+});
+
+
 const port = process.env.PORT || 3070;
 app.listen(port, () => {
     console.log(`http://localhost:${port}`);
