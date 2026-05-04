@@ -185,10 +185,10 @@ app.get('/qr', (req, res) => {
   } else {
     // اختيار عشوائي وتخزينه في الكوكي
     idx = crypto.randomInt(0, links.length);
-    res.cookie('redirectIndex', idx, {
-      maxAge: 1000 * 60 * 60 * 24 * 30, // شهر
-      httpOnly: true
-    });
+    // res.cookie('redirectIndex', idx, {
+    //   maxAge: 1000 * 60 * 60 * 24 * 30, // شهر
+    //   httpOnly: true
+    // });
   }
 
   const target = links[idx];
