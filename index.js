@@ -14,7 +14,7 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, 'public')));
 const { MongoClient, ObjectId } = require('mongodb');
 const ejs = require('ejs');
-const url = "mongodb+srv://family:aS0507499583@cluster0.dvljyns.mongodb.net/?retryWrites=true&w=majority";
+const url = "mongodb+srv://alqsmalrbyhad_db_user:aS0507499583@cluster0.mtdtmm9.mongodb.net/?appName=Cluster0";
 const client = new MongoClient(url);
 const resend = new Resend('re_GFZ3sUGo_GUVWhPR4AWWPDbtFKi1uW43J');
 const { minify } = require('html-minifier');
