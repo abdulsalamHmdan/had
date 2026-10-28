@@ -76,7 +76,6 @@
         }
 
         /* Adjust location buttons for smaller screens */
-        #restBtn,
         #campBtn {
           padding: 0.75rem;
           font-size: 0.875rem;
@@ -123,7 +122,7 @@
           src="logoEraser.png"
         />
         <p class="text-center mt-2 text-blue-100 text-slate-700">
-          اختر نوع المكان ثم التاريخ المناسب لإجراء الحجز
+          اختر التاريخ المناسب لإجراء الحجز في المخيم
         </p>
       </div>
     </header>
@@ -132,15 +131,9 @@
     <div class="container mx-auto px-6 py-6">
       <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
         <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">
-          اختر نوع المكان
+          مكان الحجز
         </h2>
         <div class="flex justify-center gap-4">
-          <button
-            id="restBtn"
-            class="location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gray-200 text-gray-600 border-2 border-gray-300"
-          >
-            🏡 الاستراحة
-          </button>
           <button
             id="campBtn"
             class="location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg"
@@ -494,7 +487,7 @@
       let blockedDays = JSON.parse('<%-block%>');
       // let blockedDays = [1,2,3];
       // switchLocation('المخيم')
-      let currentLocation = "المخيم"; // 'rest' or 'camp'
+      let currentLocation = "المخيم";
       let selectedDateElement = null;
       let theSelectedDate = null;
       let starting = null;
@@ -890,25 +883,9 @@
       function switchLocation(locationType) {
         currentLocation = locationType;
 
-        const restBtn = document.getElementById("restBtn");
-        const campBtn = document.getElementById("campBtn");
         const locationTitle = document.getElementById("locationTitle");
-
-        if (locationType === "الاستراحة") {
-          restBtn.className =
-            "location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg";
-          campBtn.className =
-            "location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gray-200 text-gray-600 border-2 border-gray-300";
-          locationTitle.innerHTML =
-            '<h3 class="text-2xl font-bold text-green-600">حجوزات الاستراحة</h3>';
-        } else {
-          campBtn.className =
-            "location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg";
-          restBtn.className =
-            "location-btn px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 bg-gray-200 text-gray-600 border-2 border-gray-300";
-          locationTitle.innerHTML =
-            '<h3 class="text-2xl font-bold text-orange-600">حجوزات المخيم</h3>';
-        }
+        locationTitle.innerHTML =
+          '<h3 class="text-2xl font-bold text-orange-600">حجوزات المخيم</h3>';
 
         // Hide booking form if open
         document.getElementById("bookingForm").classList.add("hidden");
@@ -968,9 +945,6 @@
       }
 
       // Add event listeners for location buttons
-      document
-        .getElementById("restBtn")
-        .addEventListener("click", () => alert("الاستراحة غير متاحة حاليا"));
       document
         .getElementById("campBtn")
         .addEventListener("click", () => switchLocation("المخيم"));
